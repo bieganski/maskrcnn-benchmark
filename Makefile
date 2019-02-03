@@ -14,12 +14,15 @@ install_deps:
 	pip install ninja yacs cython matplotlib; \
 	conda install pytorch-nightly -c pytorch
 	conda install -c anaconda cudnn
-	conda install -c anaconda nccl
 	conda install jupyter
 	conda install requests
 	conda install opencv
 	conda install -c anaconda pillow
-	conda install -c soumith torchvision
+	# TODO nccl moze sie przydać, ale na razie nie instalować (może coś popsuć)
+	# conda install -c anaconda nccl
+
+
+
 # uwaga - powinno dzialac, ale jak dalej bedzie cos zle
 # to warto sprobowac zrobic jeszcze conda install pytorch.
 # to downgraduje jakies pakiety, ale moze pomoc
