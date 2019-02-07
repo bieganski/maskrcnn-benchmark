@@ -56,6 +56,8 @@ prepare_download: create_venv download
 # needs activation
 install_deps:
 	conda install --yes --file requirements.txt
+	conda install -c pytorch pytorch-nightly
+	pip install yacs
 	# TODO nccl might be usuful, not listed in requirements.txt
 	# !!! in case of any problems it might be helpful to reinstall pytorch (nightly?)
 
