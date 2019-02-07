@@ -36,10 +36,16 @@ github_build:
 
 
 # needs activation
-pascal_build:
+pascal_dload:
 	$(info Building Pascal in Detail...)
 	cd pascal/detail-api; python3 ./download.py pascal .
 	cd pascal/detail-api; python3 ./download.py trainval_withkeypoints .
+
+
+
+pascal_build:
+	make -C pascal/detail-api/PythonAPI
+	make install -C pascal/detail-api/PythonAPI
 
 
 # needs activation
@@ -49,7 +55,7 @@ build_all: github_build pascal_build
 
 
 
-prepare_download: create_venv download
+prepare_download: create_venv download pascal_dload
 
 
 
@@ -63,8 +69,7 @@ install_deps:
 
 
 # needs activation
-build:
-	build_all
+build: build_all
 
 
 .PHONY: github
