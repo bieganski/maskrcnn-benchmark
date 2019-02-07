@@ -69,3 +69,4 @@ build:
 
 .PHONY: github
 .PHONY: pascal
+.PHONY: build
