@@ -1,0 +1,12 @@
+python=3.6.8
+cython=0.29.4
+ipython
+ninja
+yacs
+matplotlib
+opencv
+pytorch
+cudnn
+jupyter
+requests
+pillow

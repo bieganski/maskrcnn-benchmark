@@ -1,76 +1,69 @@
 VENV_NAME = zpp
 
 
-default:
-	build
+add_alias:
+	echo 'alias $(VENV_NAME)='source activate $(VENV_NAME)'' >> ~/.bashrc
 
 create_venv:
 	$(info Preparing env...)
 	conda create --name $(VENV_NAME)
 
-install_deps:
-	source activate $(VENV_NAME); \
-	conda install ipython; \
-	pip install ninja yacs cython matplotlib; \
-	conda install pytorch-nightly -c pytorch
-	conda install -c anaconda cudnn
-	conda install jupyter
-	conda install requests
-	conda install opencv
-	conda install -c anaconda pillow
-	# TODO nccl moze sie przydać, ale na razie nie instalować (może coś popsuć)
-	# conda install -c anaconda nccl
 
-
-
-# uwaga - powinno dzialac, ale jak dalej bedzie cos zle
-# to warto sprobowac zrobic jeszcze conda install pytorch.
-# to downgraduje jakies pakiety, ale moze pomoc
-
-
-github:
+download:
 	$(info Downloading deps from github...)
 
-	# install torchvision
-	# nie instalowac przez conda install! wtedy nie działa
+	# do NOT install by 'conda install'! it won't work
 	$(info Installing torchvision...)
 	cd ./github; \
-	git clone https://github.com/pytorch/vision.git; \
-	cd vision; \
-	python3 setup.py install
+	git clone https://github.com/pytorch/vision.git;
 
 
-	# install pycocotools
 	$(info Installing pycocotools...)
 	cd ./github; \
-	git clone https://github.com/cocodataset/cocoapi.git; \
-	cd cocoapi/PythonAPI; \
-	python3 setup.py build_ext install
+	git clone https://github.com/cocodataset/cocoapi.git
+
+	$(info Installing Pascal in detail...)
+	cd ./pascal; \
+	git clone https://github.com/ccvl/detail-api
 
 
-build:
+
+# use it to build github projects, without redownloading them
+github_build:
+	cd ./github/vision; python3 setup.py install
+	cd ./github/cocoapi/PythonAPI; python3 setup.py build_ext install
+
+
+
+# needs activation
+pascal_build:
+	$(info Building Pascal in Detail...)
+	cd pascal/detail-api; python3 ./download.py pascal .
+	cd pascal/detail-api; python3 ./download.py trainval_withkeypoints .
+
+
+# needs activation
+build_all: github_build pascal_build
 	$(info Building Mask-RCNN...)
 	python3 setup.py build develop
 
 
 
-# source ...
-pascal:
-	cd pascal; git clone https://github.com/ccvl/detail-api
-	cd pascal/detail-api; python3 ./download.py pascal .
-	cd pascal/detail-api; python3 ./download.py trainval_withkeypoints .
+prepare_download: create_venv download
 
 
 
-# to robic z 'source ...'
-all:  install_deps github pascal build
+# needs activation
+install_deps:
+	conda install --yes --file requirements.txt
+	# TODO nccl might be usuful, not listed in requirements.txt
+	# !!! in case of any problems it might be helpful to reinstall pytorch (nightly?)
 
+
+# needs activation
+build:
+	build_all
 
 
 .PHONY: github
 .PHONY: pascal
-#
-# uwaga !
-# create_env - normalnie
-# install_deps, github etc. - musi być zrobione source activate <nazwa venva>
-#
