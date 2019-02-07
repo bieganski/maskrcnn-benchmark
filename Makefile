@@ -54,8 +54,17 @@ build:
 
 
 
+# source ...
+pascal:
+	cd pascal; git clone https://github.com/ccvl/detail-api
+	cd pascal/detail-api; python3 ./download.py pascal .
+	cd pascal/detail-api; python3 ./download.py trainval_withkeypoints .
+
+
+
 # to robic z 'source ...'
-all:  install_deps github build
+all:  install_deps github pascal build
+
 
 
 .PHONY: github
