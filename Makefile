@@ -68,7 +68,7 @@ all:  install_deps github pascal build
 
 
 .PHONY: github
-
+.PHONY: pascal
 #
 # uwaga !
 # create_env - normalnie
