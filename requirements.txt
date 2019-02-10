@@ -11,3 +11,5 @@ jupyter
 requests
 pillow
 torchvision
+scikit-image
+
