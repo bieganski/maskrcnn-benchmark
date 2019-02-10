@@ -62,7 +62,8 @@ prepare_download: create_venv download pascal_dload
 # needs activation
 install_deps:
 	conda install --yes --file requirements.txt
-	conda install -c pytorch pytorch-nightly
+	conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
+	# TODO - from https://pytorch.org/get-started/locally/ choose your version of cuda
 	pip install yacs
 	# TODO nccl might be usuful, not listed in requirements.txt
 	# !!! in case of any problems it might be helpful to reinstall pytorch (nightly?)

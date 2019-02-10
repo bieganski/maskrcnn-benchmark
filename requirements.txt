@@ -8,3 +8,4 @@ cudnn
 jupyter
 requests
 pillow
+torchvision
