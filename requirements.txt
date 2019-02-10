@@ -1,4 +1,6 @@
 python=3.6.8
+cudatoolkit=9.0
+cudnn=7.3.1=cuda9.0_0
 cython=0.29.4
 ipython
 ninja

@@ -48,10 +48,15 @@ pascal_build:
 	make install -C pascal/detail-api/PythonAPI
 
 
-# needs activation
-build_all: github_build pascal_build
+# run it in case of CUDA any undefined symbol error
+mask_build:
 	$(info Building Mask-RCNN...)
+	rm -rf build/
 	python3 setup.py build develop
+
+
+# needs activation
+build_all: github_build pascal_build mask_build
 
 
 
@@ -62,6 +67,7 @@ prepare_download: create_venv download pascal_dload
 # needs activation
 install_deps:
 	conda install --yes --file requirements.txt
+	# conda install pytorch torchvision cudatoolkit=10.0 -c pytorch
 	conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
 	# TODO - from https://pytorch.org/get-started/locally/ choose your version of cuda
 	pip install yacs
@@ -71,6 +77,10 @@ install_deps:
 
 # needs activation
 build: build_all
+
+
+modify_bashrc:
+	cat to_bashrc.txt >> ~/.bashrc
 
 
 .PHONY: github
