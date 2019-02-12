@@ -70,3 +70,33 @@ Build and run image with built-in jupyter notebook(note that the password is use
 
     nvidia-docker build -t maskrcnn-benchmark-jupyter docker/docker-jupyter/
     nvidia-docker run -td -p 8888:8888 -e PASSWORD=<password> -v <host-dir>:<container-dir> maskrcnn-benchmark-jupyter
+
+### Option 3: Makefile
+
+You can simply build everything & download all the datasets using makefile:
+```bash
+make prepare_download
+conda activate zpp
+make install_deps
+make build
+```
+
+Unfortunately, it takes quite some time and downloads a lot of data. However, you can use longer version and comment out unnecessary lines:
+
+```bash
+# ---------- make prepare_download ----------
+make creavet_venv       # Creates conda venv called 'zpp'
+make download           # Download all the github repositories
+make psacal_dload       # Downloads Pascal in detail datasets
+
+conda activate zpp      # Activates conda venv
+
+make install_deps       # Installs all the required pasckages
+
+# ---------- make build -----------
+make github_build       # Builds & installs torchvision & coco-api for Python
+make pascal_build       # Builds & installs Pascal in detail-api for Python
+make mask_build         # Builds & installs maskrcnn-benchmark
+```
+
+The above path has been tested on Ubunut 18.04

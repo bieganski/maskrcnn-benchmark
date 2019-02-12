@@ -14,32 +14,33 @@ download:
 
 	# do NOT install by 'conda install'! it won't work
 	$(info Installing torchvision...)
-	cd ./github; \
+	cd ./github && \
 	git clone https://github.com/pytorch/vision.git;
 
 
 	$(info Installing pycocotools...)
-	cd ./github; \
+	cd ./github && \
 	git clone https://github.com/cocodataset/cocoapi.git
 
 	$(info Installing Pascal in detail...)
-	cd ./pascal; \
+	mkdir pascal; \
+	cd ./pascal && \
 	git clone https://github.com/ccvl/detail-api
 
 
 
 # use it to build github projects, without redownloading them
 github_build:
-	cd ./github/vision; python3 setup.py install
-	cd ./github/cocoapi/PythonAPI; python3 setup.py build_ext install
+	cd ./github/vision && python3 setup.py install
+	cd ./github/cocoapi/PythonAPI && python3 setup.py build_ext install
 
 
 
 # needs activation
 pascal_dload:
 	$(info Building Pascal in Detail...)
-	cd pascal/detail-api; python3 ./download.py pascal .
-	cd pascal/detail-api; python3 ./download.py trainval_withkeypoints .
+	cd pascal/detail-api && python3 ./download.py pascal .
+	cd pascal/detail-api && python3 ./download.py trainval_withkeypoints .
 
 
 
@@ -68,7 +69,7 @@ prepare_download: create_venv download pascal_dload
 install_deps:
 	conda install --yes --file requirements.txt
 	# conda install pytorch torchvision cudatoolkit=10.0 -c pytorch
-	conda install pytorch torchvision cudatoolkit=9.0 -c pytorch
+	conda install --yes pytorch torchvision cudatoolkit=9.0 -c pytorch
 	# TODO - from https://pytorch.org/get-started/locally/ choose your version of cuda
 	pip install yacs
 	# TODO nccl might be usuful, not listed in requirements.txt
