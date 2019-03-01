@@ -12,4 +12,5 @@ requests
 pillow
 torchvision
 scikit-image
-
+yacs
+tqdm

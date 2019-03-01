@@ -71,7 +71,11 @@ ResNet101FPNStagesTo5 = tuple(
     StageSpec(index=i, block_count=c, return_features=r)
     for (i, c, r) in ((1, 3, True), (2, 4, True), (3, 23, True), (4, 3, True))
 )
-
+# ResNet-152-FPN (including all stages)
+ResNet152FPNStagesTo5 = tuple(
+    StageSpec(index=i, block_count=c, return_features=r)
+    for (i, c, r) in ((1, 3, True), (2, 8, True), (3, 36, True), (4, 3, True))
+)
 
 class ResNet(nn.Module):
     def __init__(self, cfg):
@@ -183,6 +187,7 @@ class ResNetHead(nn.Module):
             stride = None
             self.add_module(name, module)
             self.stages.append(name)
+        self.out_channels = out_channels
 
     def forward(self, x):
         for stage in self.stages:
@@ -239,7 +244,7 @@ class Bottleneck(nn.Module):
             down_stride = stride if dilation == 1 else 1
             self.downsample = nn.Sequential(
                 Conv2d(
-                    in_channels, out_channels, 
+                    in_channels, out_channels,
                     kernel_size=1, stride=down_stride, bias=False
                 ),
                 norm_func(out_channels),
@@ -406,5 +411,8 @@ _STAGE_SPECS = Registry({
     "R-101-C4": ResNet101StagesTo4,
     "R-101-C5": ResNet101StagesTo5,
     "R-50-FPN": ResNet50FPNStagesTo5,
+    "R-50-FPN-RETINANET": ResNet50FPNStagesTo5,
     "R-101-FPN": ResNet101FPNStagesTo5,
+    "R-101-FPN-RETINANET": ResNet101FPNStagesTo5,
+    "R-152-FPN": ResNet152FPNStagesTo5,
 })
