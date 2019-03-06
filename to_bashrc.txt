@@ -3,6 +3,7 @@ alias zpp='source activate zpp'
 alias wyjdz='conda deactivate'
 alias wyczysc="conda list | grep -v "#" | xargs conda remove -y"
 alias usun='conda env remove -n zpp'
+alias trenuj='python3 ./tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml"'
 
 export CUDA_HOME=/usr/local/cuda
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/e$

@@ -79,6 +79,10 @@ class DatasetCatalog(object):
             "img_dir": "voc/VOC2012/JPEGImages",
             "ann_file": "voc/VOC2012/Annotations/pascal_train2012.json"
         },
+        "voc_2010_train": {
+            "data_dir": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/detail-api/VOCdevkit/MINIMAL",
+            "split": "train"
+        },
         "voc_2012_val": {
             "data_dir": "voc/VOC2012",
             "split": "val"

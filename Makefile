@@ -84,6 +84,30 @@ modify_bashrc:
 	cat to_bashrc.txt >> ~/.bashrc
 
 
+
+
+VOC=./pascal/detail-api/VOCdevkit
+NEW=MINIMAL
+OLD=VOC2010
+NUM_LINES=3 # preserved number of lines PLUS ONE in each test case
+
+
+# remember not to use 2007 images, there are no annotations with them!
+custom_voc_tree:
+	# reproduce directory structure, with minimal test cases
+	rm -rf ${VOC}/${NEW}
+	mkdir ${VOC}/${NEW}
+	# the way below - kinda lame, thus commented
+	# rsync -a --include '*/' --exclude '*' ${VOC}/${OLD}/ ${VOC}/${NEW}
+	# ls -1 ${VOC}/${OLD}/ImageSets/Main | grep "train" | head -n 2 | xargs -I {} cp ${VOC}/${OLD}/ImageSets/Main/{} ${VOC}/${NEW}/ImageSets/Main
+	rsync -a ${VOC}/${OLD}/ ${VOC}/${NEW}
+	cd ${VOC}/${NEW}/ImageSets; find . -type f | xargs -I {} sed -i '${NUM_LINES},$$ d' {}
+
+train:
+	python3 tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml"
+
 .PHONY: github
 .PHONY: pascal
 .PHONY: build
+
+
