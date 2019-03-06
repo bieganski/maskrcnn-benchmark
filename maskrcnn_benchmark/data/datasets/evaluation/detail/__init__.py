@@ -1,7 +1,7 @@
 from .detail_eval import do_detail_evaluation
 
 
-def coco_evaluation(
+def detail_evaluation(
     dataset,
     predictions,
     output_folder,
