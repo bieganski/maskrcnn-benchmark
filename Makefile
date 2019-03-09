@@ -120,12 +120,6 @@ show_dataset_split:
 	$(info wait several seconds...)
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
-<<<<<<< HEAD
-
-train:
-	cd ./trash && rm -rf *
-	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml" --skip-test
-=======
 train_cuda:
 	if [ -d "./trash" ]; then \
 		cd ./trash && rm -rf *; \
@@ -139,7 +133,6 @@ train_cpu:
 	else mkdir trash; \
 	fi
 	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config_cpu.yaml" --skip-test
->>>>>>> Solved scikit-image compatibility problem & Makefile tweaks
 
 .PHONY: github
 .PHONY: pascal

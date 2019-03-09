@@ -80,11 +80,7 @@ class DatasetCatalog(object):
             "ann_file": "voc/VOC2012/Annotations/pascal_train2012.json"
         },
         "voc_2010_train": {
-<<<<<<< HEAD
-            "data_dir": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/VOCdevkit/MINIMAL",
-=======
             "data_dir": "pascal/detail-api/VOCdevkit/MINIMAL",
->>>>>>> Solved scikit-image compatibility problem & Makefile tweaks
             "split": "train"
         },
         "voc_2012_val": {
