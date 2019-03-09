@@ -89,7 +89,7 @@ modify_bashrc:
 VOC=./pascal/detail-api/VOCdevkit
 NEW=MINIMAL
 OLD=VOC2010
-NUM_LINES=2  # preserved number of lines PLUS ONE in each test case
+NUM_TRAIN_IMAGES=100
 DETAIL=./pascal/detail-api/trainval_withkeypoints.json
 
 # remember not to use 2007 images, there are no annotations with them!
@@ -101,7 +101,7 @@ create_minimal_voc_dataset:
 	# rsync -a --include '*/' --exclude '*' ${VOC}/${OLD}/ ${VOC}/${NEW}
 	# ls -1 ${VOC}/${OLD}/ImageSets/Main | grep "train" | head -n 2 | xargs -I {} cp ${VOC}/${OLD}/ImageSets/Main/{} ${VOC}/${NEW}/ImageSets/Main
 	rsync -a ${VOC}/${OLD}/ ${VOC}/${NEW}
-	cd ${VOC}/${NEW}/ImageSets; find . -type f | xargs -I {} sed -i '${NUM_LINES},$$ d' {}
+	cd ${VOC}/${NEW}/ImageSets/Main; sed -i '${NUM_TRAIN_IMAGES},$$ d' train.txt
 
 
 # shows number of images (test, train, val) used by Detail API.
