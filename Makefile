@@ -89,11 +89,11 @@ modify_bashrc:
 VOC=./pascal/detail-api/VOCdevkit
 NEW=MINIMAL
 OLD=VOC2010
-NUM_LINES=3 # preserved number of lines PLUS ONE in each test case
+NUM_LINES=2  # preserved number of lines PLUS ONE in each test case
 DETAIL=./pascal/detail-api/trainval_withkeypoints.json
 
 # remember not to use 2007 images, there are no annotations with them!
-custom_voc_tree:
+create_minimal_voc_dataset:
 	# reproduce directory structure, with minimal test cases
 	rm -rf ${VOC}/${NEW}
 	mkdir ${VOC}/${NEW}
@@ -111,6 +111,7 @@ show_dataset_split:
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
 train:
+	cd ./trash; rm -rf *
 	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml" --skip-test
 
 .PHONY: github
