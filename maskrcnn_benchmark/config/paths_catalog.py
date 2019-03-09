@@ -80,7 +80,7 @@ class DatasetCatalog(object):
             "ann_file": "voc/VOC2012/Annotations/pascal_train2012.json"
         },
         "voc_2010_train": {
-            "data_dir": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/detail-api/VOCdevkit/MINIMAL",
+            "data_dir": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/VOCdevkit/MINIMAL",
             "split": "train"
         },
         "voc_2012_val": {
@@ -107,17 +107,23 @@ class DatasetCatalog(object):
         "cityscapes_fine_instanceonly_seg_test_cocostyle": {
             "img_dir": "cityscapes/images",
             "ann_file": "cityscapes/annotations/instancesonly_filtered_gtFine_test.json"
-        }
+        },
+        "detail": {
+            "img_dir": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/VOCdevkit/MINIMAL",
+            "ann_file": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/trainval_withkeypoints.json",
+            "split": "train",
+        },
+
     }
 
     @staticmethod
     def get(name):
         if "detail" in name:
-            # TODO pewnie trzeba będzie nieco zmienić
             data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
-                data_dir=os.path.join(data_dir, attrs["data_dir"]),
+                data_dir=attrs["data_dir"], # TODO relative path
+                ann_file=attrs["ann_file"],
                 split=attrs["split"],
             )
             return dict(

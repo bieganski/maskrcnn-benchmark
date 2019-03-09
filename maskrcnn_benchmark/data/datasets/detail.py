@@ -13,8 +13,8 @@ from maskrcnn_benchmark.structures.keypoint import Keypoints # TODO PersonKeypoi
 
 
 # example DetailDataset initialisation:
-# annFile = '/home/mateusz/zpp/maskrcnn-benchmark/pascal/detail-api/trainval_withkeypoints.json'
-# imgDir='/home/mateusz/zpp/maskrcnn-benchmark/pascal/detail-api/VOCdevkit/MINIMAL/JPEGImages'
+# imgDir='/home/mateusz/zpp/maskrcnn-benchmark/pascal/VOCdevkit/MINIMAL/JPEGImages'
+# annFile = '/home/mateusz/zpp/maskrcnn-benchmark/pascal/trainval_withkeypoints.json'
 # split = 'train' / 'trainval' / 'test'
 
 
@@ -25,20 +25,18 @@ from maskrcnn_benchmark.structures.keypoint import Keypoints # TODO PersonKeypoi
 # mask and kpts in standard maskrcnn-benchmark.structure format, and
 # boundings and occlusions in Pascal in Detail format (TODO check it out)
 # TODO implement minimal
-# TODO implement split
-# upper tasks are rather easy, because each image from trainval.json is
-# labeled with train/val/test, and "minimal" is for instance just taking 1/10 images
+# upper tasks are rather easy, because "minimal" is for instance just taking 1/10 images
 class DetailDataset(torch.utils.data.Dataset):
 
     CLASSES = PascalVOCDataset.CLASSES # TODO to chyba nie wszystkie, Detail.getCats() zwraca wiecej
 
-    def __init__(self, img_dir, anno_path, split, minimal=False, transforms=None):
+    def __init__(self, img_dir, ann_file, split, minimal=False, transforms=None):
         self.img_dir = img_dir
         self.image_set = split
         self.transforms = transforms
-        self.anno = anno_path
+        self.anno = ann_file
 
-        self.detail = Detail(anno_path, img_dir, split, minimal)
+        self.detail = Detail(ann_file, img_dir, split, minimal, divider=10)
 
         imgs = self.detail.getImgs()
         idxs = range(len(imgs))

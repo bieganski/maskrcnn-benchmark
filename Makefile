@@ -9,25 +9,25 @@ create_venv:
 	conda create --name $(VENV_NAME)
 
 
-download:
-	$(info Downloading deps from github...)
-
+_download_torchvision:
 	# do NOT install by 'conda install'! it won't work
 	$(info Installing torchvision...)
 	cd ./github && \
 	git clone https://github.com/pytorch/vision.git;
 
-
+_download_coco:
 	$(info Installing pycocotools...)
 	cd ./github && \
 	git clone https://github.com/cocodataset/cocoapi.git
 
+download_pascal:
 	$(info Installing Pascal in detail (from our fork)...)
 	mkdir pascal; \
 	cd ./pascal && \
 	git clone https://github.com/bieganski/detail-api
 
 
+download: _download_torchvision _download_coco download_pascal
 
 # use it to build github projects, without redownloading them
 github_build:
@@ -39,6 +39,7 @@ github_build:
 # needs activation
 pascal_dload:
 	$(info Building Pascal in Detail...)
+	chmod +x pascal/detail-api/download.py
 	cd pascal/detail-api && python3 ./download.py pascal .
 	cd pascal/detail-api && python3 ./download.py trainval_withkeypoints .
 
@@ -48,6 +49,14 @@ pascal_build:
 	make -C pascal/detail-api/PythonAPI
 	make install -C pascal/detail-api/PythonAPI
 
+
+# remember to keep somewhere trainval_withkeypoints.json and VOCkit saved
+_detail_redload:
+	rm -rf ./pascal/detail-api
+	cd pascal && git clone https://github.com/bieganski/detail-api
+
+
+detail_update: _detail_redload pascal_build
 
 # run it in case of CUDA any undefined symbol error
 mask_build:
@@ -85,12 +94,11 @@ modify_bashrc:
 
 
 
-
-VOC=./pascal/detail-api/VOCdevkit
+VOC=./pascal/VOCdevkit
 NEW=MINIMAL
 OLD=VOC2010
-NUM_TRAIN_IMAGES=100
-DETAIL=./pascal/detail-api/trainval_withkeypoints.json
+NUM_TRAIN_IMAGES=500
+DETAIL=./pascal/trainval_withkeypoints.json
 
 # remember not to use 2007 images, there are no annotations with them!
 create_minimal_voc_dataset:
@@ -110,8 +118,9 @@ show_dataset_split:
 	$(info wait several seconds...)
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
+
 train:
-	cd ./trash; rm -rf *
+	cd ./trash && rm -rf *
 	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml" --skip-test
 
 .PHONY: github
