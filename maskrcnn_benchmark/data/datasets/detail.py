@@ -7,16 +7,16 @@ from detail import Detail
 
 
 
-# TODO dlaczego nie moge tego zaimportowac?
 details = None
 
-def detail_test():
+def detail_test(details):
     annFile = '/home/mateusz/zpp/maskrcnn-benchmark/pascal/detail-api/trainval_withkeypoints.json'
     imgDir='/home/mateusz/zpp/maskrcnn-benchmark/pascal/detail-api/VOCdevkit/MINIMAL/JPEGImages'
     phase = 'trainval'
 
     details = Detail(annFile, imgDir, phase)
-    print(details.info())
+    cats = details.getCats()
+    print(cats)
 
 
 # similar to VOC Dataset, but containing more anns
@@ -25,8 +25,8 @@ class DetailDataset(torch.utils.data.Dataset):
 
     CLASSES = PascalVOCDataset.CLASSES
 
-    def __init__(self, img_dir, anno, split, use_difficult=False, transforms=None):
-        self.root = img_dir
+    def __init__(self, data_dir, anno, split, use_difficult=False, transforms=None):
+        self.root = data_dir
         self.image_set = split
         self.keep_difficult = use_difficult
         self.transforms = transforms

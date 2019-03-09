@@ -90,7 +90,7 @@ VOC=./pascal/detail-api/VOCdevkit
 NEW=MINIMAL
 OLD=VOC2010
 NUM_LINES=3 # preserved number of lines PLUS ONE in each test case
-
+DETAIL=./pascal/detail-api/trainval_withkeypoints.json
 
 # remember not to use 2007 images, there are no annotations with them!
 custom_voc_tree:
@@ -103,8 +103,15 @@ custom_voc_tree:
 	rsync -a ${VOC}/${OLD}/ ${VOC}/${NEW}
 	cd ${VOC}/${NEW}/ImageSets; find . -type f | xargs -I {} sed -i '${NUM_LINES},$$ d' {}
 
+
+# shows number of images (test, train, val) used by Detail API.
+show_dataset_split:
+	$(info you need to have jq installed)
+	$(info wait several seconds...)
+	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
+
 train:
-	python3 tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml"
+	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml" --skip-test
 
 .PHONY: github
 .PHONY: pascal
