@@ -22,10 +22,10 @@ download:
 	cd ./github && \
 	git clone https://github.com/cocodataset/cocoapi.git
 
-	$(info Installing Pascal in detail...)
+	$(info Installing Pascal in detail (from our fork)...)
 	mkdir pascal; \
 	cd ./pascal && \
-	git clone https://github.com/ccvl/detail-api
+	git clone https://github.com/bieganski/detail-api
 
 
 
