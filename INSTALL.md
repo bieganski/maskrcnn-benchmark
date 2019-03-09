@@ -89,9 +89,9 @@ Unfortunately, it takes quite some time and downloads a lot of data. However, yo
 
 ```bash
 # ---------- make prepare_download ----------
-make creavet_venv       # Creates conda venv called 'zpp'
+make create_venv       # Creates conda venv called 'zpp'
 make download           # Download all the github repositories
-make psacal_dload       # Downloads Pascal in detail datasets
+make pascal_dload       # Downloads Pascal in detail datasets
 
 conda activate zpp      # Activates conda venv
 

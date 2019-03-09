@@ -6,11 +6,8 @@ ipython
 ninja
 matplotlib
 opencv
-cudnn
 jupyter
 requests
 pillow
 torchvision
-scikit-image
-yacs
 tqdm

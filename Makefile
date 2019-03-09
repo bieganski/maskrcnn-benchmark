@@ -80,7 +80,7 @@ install_deps:
 	# conda install pytorch torchvision cudatoolkit=10.0 -c pytorch
 	conda install --yes pytorch torchvision cudatoolkit=9.0 -c pytorch
 	# TODO - from https://pytorch.org/get-started/locally/ choose your version of cuda
-	pip install yacs
+	pip install yacs scikit-image
 	# TODO nccl might be usuful, not listed in requirements.txt
 	# !!! in case of any problems it might be helpful to reinstall pytorch (nightly?)
 
@@ -109,7 +109,9 @@ create_minimal_voc_dataset:
 	# rsync -a --include '*/' --exclude '*' ${VOC}/${OLD}/ ${VOC}/${NEW}
 	# ls -1 ${VOC}/${OLD}/ImageSets/Main | grep "train" | head -n 2 | xargs -I {} cp ${VOC}/${OLD}/ImageSets/Main/{} ${VOC}/${NEW}/ImageSets/Main
 	rsync -a ${VOC}/${OLD}/ ${VOC}/${NEW}
-	cd ${VOC}/${NEW}/ImageSets/Main; sed -i '${NUM_TRAIN_IMAGES},$$ d' train.txt
+	cd ${VOC}/${NEW}/ImageSets/Main && sed -i '${NUM_TRAIN_IMAGES},$$ d' train.txt
+	if [ ! -d "./datasets" ]; then mkdir datasets; fi
+	if [ ! -f pascal ]; then ln -s ../pascal/ ./datasets/pascal; fi
 
 
 # shows number of images (test, train, val) used by Detail API.
@@ -118,10 +120,26 @@ show_dataset_split:
 	$(info wait several seconds...)
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
+<<<<<<< HEAD
 
 train:
 	cd ./trash && rm -rf *
 	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/moj_config.yaml" --skip-test
+=======
+train_cuda:
+	if [ -d "./trash" ]; then \
+		cd ./trash && rm -rf *; \
+	else mkdir trash; \
+	fi
+	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config_cuda.yaml" --skip-test
+
+train_cpu:
+	if [ -d "./trash" ]; then \
+		cd ./trash && rm -rf *; \
+	else mkdir trash; \
+	fi
+	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config_cpu.yaml" --skip-test
+>>>>>>> Solved scikit-image compatibility problem & Makefile tweaks
 
 .PHONY: github
 .PHONY: pascal

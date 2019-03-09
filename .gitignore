@@ -25,6 +25,9 @@ dist/
 # Pycharm editor settings
 .idea
 
+# Visual Studio Code settings
+.vscode
+
 # project dirs
 /datasets
 /models
