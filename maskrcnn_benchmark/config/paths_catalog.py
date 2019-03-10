@@ -109,8 +109,8 @@ class DatasetCatalog(object):
             "ann_file": "cityscapes/annotations/instancesonly_filtered_gtFine_test.json"
         },
         "detail": {
-            "img_dir": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/VOCdevkit/MINIMAL",
-            "ann_file": "/home/mateusz/zpp/maskrcnn-benchmark/pascal/trainval_withkeypoints.json",
+            "img_dir": "./pascal/VOCdevkit/MINIMAL",
+            "ann_file": "./pascal/trainval_withkeypoints.json",
             "split": "train",
         },
 
@@ -119,10 +119,9 @@ class DatasetCatalog(object):
     @staticmethod
     def get(name):
         if "detail" in name:
-            data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
-                data_dir=attrs["data_dir"], # TODO relative path
+                data_dir=attrs["data_dir"],
                 ann_file=attrs["ann_file"],
                 split=attrs["split"],
             )
