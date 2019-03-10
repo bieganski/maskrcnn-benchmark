@@ -21,11 +21,9 @@ from maskrcnn_benchmark.structures.keypoint import Keypoints # TODO PersonKeypoi
 # similar to VOC Dataset, but containing more annotations
 # for additional tasks, like boundary or occlusion recognition.
 # target BoxList contains additional fields:
-# 'mask', 'kpts', 'bounds', 'occl'.
+# 'class_mask' (semantic seg.), 'instance_mask' (person instance seg.), 'kpts', 'bounds', 'occl'.
 # mask and kpts in standard maskrcnn-benchmark.structure format, and
 # boundings and occlusions in Pascal in Detail format (TODO check it out)
-# TODO implement minimal
-# upper tasks are rather easy, because "minimal" is for instance just taking 1/10 images
 class DetailDataset(torch.utils.data.Dataset):
 
     CLASSES = PascalVOCDataset.CLASSES # TODO to chyba nie wszystkie, Detail.getCats() zwraca wiecej
@@ -36,7 +34,11 @@ class DetailDataset(torch.utils.data.Dataset):
         self.transforms = transforms
         self.anno = ann_file
 
+
         self.detail = Detail(ann_file, img_dir, split, minimal, divider=10)
+
+        # TODO poprawny format klas:
+        self.CLASSES = self.detail.getCats()
 
         imgs = self.detail.getImgs()
         idxs = range(len(imgs))
@@ -45,8 +47,8 @@ class DetailDataset(torch.utils.data.Dataset):
         # TODO może się przydać, zrobic to poprawnie, uważając na underscore
         # self.img_to_idx = dict(zip([x.image_id for x in imgs], idxs))
 
-        cls = DetailDataset.CLASSES
-        self.class_to_ind = dict(zip(cls, range(len(cls))))
+
+        self.class_to_ind = dict(zip(self.CLASSES, range(len(self.CLASSES))))
 
     def __len__(self):
         return len(self.idx_to_img)
@@ -70,7 +72,17 @@ class DetailDataset(torch.utils.data.Dataset):
 
         # TODO keypoints - gubimy informację o bbox
         target.add_field("kpts", Keypoints(keypoints, self._img_size(img)))
-        target.add_field("mask", SegmentationMask(self.detail.getMask(img).tolist(), size=self._img_size(img)))
+        # target.add_field("mask", SegmentationMask(self.detail.getMask(img).tolist(), size=self._img_size(img)))
+        # TODO getMask zwraca macierz rozmiaru (img.height, img.width), gdzie każdemu pikselowi
+        # TODO odpowiada numer id klasy, do której należy. SegmentationMask
+
+        # from getMask() doc:
+        # If semantic segmentation of an image is requested (cat=instance=superpart=part=None),
+        # the result is an image whose pixel values are the class IDs for that image.
+        # If instance-level segmentation for one category of an image is requested (img and cat provided),
+        # the result is an image whose pixel values are the instance IDs for that class and 0 everywhere else.
+        target.add_field("class_mask", self.detail.getMask(img))
+        target.add_field("instance_mask", self.detail.getMask(img, cat='person'))
         target.add_field("bounds", self.detail.getBounds(img))
         target.add_field("occl", self.detail.getOccl(img))
         # TODO human parts?
