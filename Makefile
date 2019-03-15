@@ -94,7 +94,7 @@ modify_bashrc:
 
 
 
-VOC=./pascal/VOCdevkit
+VOC=./pascal/detail-api/VOCdevkit
 NEW=MINIMAL
 OLD=VOC2010
 NUM_TRAIN_IMAGES=500
