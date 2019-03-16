@@ -120,19 +120,12 @@ show_dataset_split:
 	$(info wait several seconds...)
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
-train_cuda:
+train:
 	if [ -d "./trash" ]; then \
 		cd ./trash && rm -rf *; \
 	else mkdir trash; \
 	fi
-	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config_cuda.yaml" --skip-test
-
-train_cpu:
-	if [ -d "./trash" ]; then \
-		cd ./trash && rm -rf *; \
-	else mkdir trash; \
-	fi
-	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config_cpu.yaml" --skip-test
+	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config.yaml" --skip-test
 
 .PHONY: github
 .PHONY: pascal
