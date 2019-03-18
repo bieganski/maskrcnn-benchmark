@@ -9,7 +9,7 @@ from .voc import PascalVOCDataset
 
 from maskrcnn_benchmark.structures.bounding_box import BoxList
 from maskrcnn_benchmark.structures.segmentation_mask import SegmentationMask
-from maskrcnn_benchmark.structures.keypoint import Keypoints # TODO PersonKeypoints?
+from maskrcnn_benchmark.structures.keypoint import Keypoints, PersonKeypoints # TODO PersonKeypoints?
 
 
 # example DetailDataset initialisation:

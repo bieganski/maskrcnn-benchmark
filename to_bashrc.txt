@@ -8,3 +8,10 @@ alias trenuj='python3 ./tools/train_net.py --config-file "./configs/pascal_voc/m
 export CUDA_HOME=/usr/local/cuda
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda/lib64:/usr/local/cuda/e$
 export PATH=$PATH:$CUDA_HOME/bin
+
+
+alias doz='cd ~/zpp/maskrcnn-benchmark/'
+alias dod='cd /home/mateusz/zpp/maskrcnn-benchmark/pascal/VOCdevkit/'
+alias doc='cd /home/mateusz/zpp/maskrcnn-benchmark/github/cocoapi/PythonAPI/'
+alias jup='cd /home/mateusz/zpp/maskrcnn-benchmark/ipynb; jupyter notebook'
+

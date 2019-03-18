@@ -127,6 +127,16 @@ train:
 	fi
 	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config.yaml" --skip-test
 
+
+
+to_coco:
+    chmod +x ./toCoco.py
+    ./toCoco
+
+
+
+
+
 .PHONY: github
 .PHONY: pascal
 .PHONY: build

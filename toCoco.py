@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# TODO
+# ########### ISSUES
+# showAnns for segmentation all in one colour
+
+
 import json
 from os.path import join
 
@@ -9,11 +14,12 @@ OUTPUT_DIR='./tococo'
 
 KPT = 'kpt.json'
 INST = 'inst.json'
-KPT_TEST = 'lol.json'
-
 
 class DetailToCoco:
     # TODO ukradzione wprost z COCOAPI, liczę, że pokrywa się z detail api
+    # edit: nie pokrywa się z detail, bowiem keypointy COCO mają po 17 punktów,
+    # natomiast keypyointy detailowe mają tylko 14 (brakuje oczu i uszu),
+    # dlatego nie będziemy ich używać, napiszemy swoje na podstawie tych detailowych.
     KPT_CATS = [{'supercategory': 'person',
                  'id': 1,
                  'name': 'person',
@@ -54,6 +60,22 @@ class DetailToCoco:
                               [4, 6],
                               [5, 7]]}]
 
+    # real detail keypoints
+    HEAD = 1
+    NECK = 2
+    LEFT_SHOULDER = 3
+    RIGHT_SHOULDER = 9
+    LEFT_ELBOW = 4
+    RIGHT_ELBOW = 10
+    LEFT_WRIST = 5
+    RIGHT_WRIST = 11
+    LEFT_HIP = 6
+    RIGHT_HIP = 12
+    LEFT_KNEE = 7
+    RIGHT_KNEE = 13
+    LEFT_ANKLE = 8
+    RIGHT_ANKLE = 14
+
     def __init__(self):
         self.KPT = 'kpt.json'
         self.INST = 'inst.json'
@@ -63,10 +85,30 @@ class DetailToCoco:
         self.OUTPUT_DIR = './tococo'
         self.d = json.load(open(join(TRAINVAL_PATH, DETAIL_ANNS), 'r'))
         self.INST_CATS = self.d['categories']
+
+        self.REAL_KPTS = [
+            [self.HEAD, self.NECK],
+            [self.NECK, self.LEFT_SHOULDER],
+            [self.LEFT_SHOULDER, self.LEFT_ELBOW],
+            [self.LEFT_ELBOW, self.LEFT_WRIST],
+            [self.NECK, self.RIGHT_SHOULDER],
+            [self.RIGHT_SHOULDER, self.RIGHT_ELBOW],
+            [self.RIGHT_ELBOW, self.RIGHT_WRIST],
+            [self.LEFT_SHOULDER, self.LEFT_HIP],
+            [self.LEFT_HIP, self.LEFT_KNEE],
+            [self.LEFT_KNEE, self.LEFT_ANKLE],
+            [self.RIGHT_SHOULDER, self.RIGHT_HIP],
+            [self.RIGHT_HIP, self.RIGHT_KNEE],
+            [self.RIGHT_KNEE, self.RIGHT_ANKLE]
+        ]
+
         for cat in self.INST_CATS:
             cat['id'] = cat['category_id']
             del cat['category_id']
+            if cat['name'] == 'person':
+                cat['skeleton'] = self.REAL_KPTS # self.KPT_CATS[0]['skeleton'] <-- that one sucks (14 vs 17)
         self.change_id_format()
+
 
     def change_id_format(self):
         imgs = self.d['images']
@@ -101,7 +143,7 @@ class DetailToCoco:
         return res
 
     def dumpKpt(self):
-        kpts = self.to_dict(self.convert_kpts, self.KPT_CATS)
+        kpts = self.to_dict(self.convert_kpts, self.INST_CATS)
         with open(join(OUTPUT_DIR, KPT), 'w') as outfile:
             json.dump(kpts, outfile)
 
@@ -110,14 +152,8 @@ class DetailToCoco:
         with open(join(OUTPUT_DIR, INST), 'w') as outfile:
             json.dump(inst, outfile)
 
-    def dumpTest(self):
-        kpts = self.to_dict(self.convert_kpts, self.INST_CATS)
-        with open(join(OUTPUT_DIR, KPT_TEST), 'w') as outfile:
-            json.dump(kpts, outfile)
-
 
 if __name__ == '__main__':
     dc = DetailToCoco()
     dc.dumpInst()
     dc.dumpKpt()
-    dc.dumpTest()
