@@ -6,10 +6,9 @@ from PIL import Image
 from detail import Detail
 from .voc import PascalVOCDataset
 
-
 from maskrcnn_benchmark.structures.bounding_box import BoxList
 from maskrcnn_benchmark.structures.segmentation_mask import SegmentationMask
-from maskrcnn_benchmark.structures.keypoint import Keypoints # TODO PersonKeypoints?
+from maskrcnn_benchmark.structures.keypoint import Keypoints  # TODO PersonKeypoints?
 
 
 # example DetailDataset initialisation:
@@ -25,15 +24,13 @@ from maskrcnn_benchmark.structures.keypoint import Keypoints # TODO PersonKeypoi
 # mask and kpts in standard maskrcnn-benchmark.structure format, and
 # boundings and occlusions in Pascal in Detail format (TODO check it out)
 class DetailDataset(torch.utils.data.Dataset):
-
-    CLASSES = PascalVOCDataset.CLASSES # TODO to chyba nie wszystkie, Detail.getCats() zwraca wiecej
+    CLASSES = PascalVOCDataset.CLASSES  # TODO to chyba nie wszystkie, Detail.getCats() zwraca wiecej
 
     def __init__(self, img_dir, ann_file, split, minimal=False, transforms=None):
         self.img_dir = img_dir
         self.image_set = split
         self.transforms = transforms
         self.anno = ann_file
-
 
         self.detail = Detail(ann_file, img_dir, split, minimal, divider=10)
 
@@ -46,7 +43,6 @@ class DetailDataset(torch.utils.data.Dataset):
 
         # TODO może się przydać, zrobic to poprawnie, uważając na underscore
         # self.img_to_idx = dict(zip([x.image_id for x in imgs], idxs))
-
 
         self.class_to_ind = dict(zip(self.CLASSES, range(len(self.CLASSES))))
 
@@ -89,7 +85,6 @@ class DetailDataset(torch.utils.data.Dataset):
 
         return target
 
-
     def __getitem__(self, idx):
         img = self.idx_to_img[idx]
         # example img object:
@@ -101,7 +96,6 @@ class DetailDataset(torch.utils.data.Dataset):
         if self.transforms is not None:
             img, target = self.transforms(img, target)
         return img, target, idx
-
 
     def get_img_info(self, idx):
         img = self.idx_to_img[idx]

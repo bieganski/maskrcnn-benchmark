@@ -50,12 +50,36 @@ def do_detail_evaluation(
     if output_folder:
         torch.save(results, os.path.join(output_folder, 'detail_results.pth'))
     return results, detail_results
-    # TODO
 
 
 def prepare_for_detail_detection(predictions, dataset):
+    """
+
+    :param predictions: list(BoxList)
+    :param dataset: dataset.DetailDataset
+    :return: list
+    """
+
+    detail_results = []
+    # prediction is a BoxList
+    for image_id, prediction in enumerate(predictions):
+        original_id = dataset.idx_to_img[image_id]
+        if len(prediction) == 0:
+            continue
+
+        img_info = dataset.get_img_info(image_id)
+        # TODO: Check dataset type and available methods
+        image_width = img_info['width']
+        image_height = img_info['height']
+        prediction = prediction.resize((image_width, image_height))
+        prediction = prediction.convert('xywh')
+
+        boxes = prediction.bbox.tolist()
+        scores = prediction.get_field('scores').tolist()
+        labels = prediction.get_field('labels').tolist()
+
     # TODO
-    pass
+    return detail_results
 
 
 def prepare_for_detail_segmentation(predictions, dataset):
