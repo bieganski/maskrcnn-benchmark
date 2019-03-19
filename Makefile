@@ -130,11 +130,8 @@ train:
 
 
 to_coco:
-    chmod +x ./toCoco.py
-    ./toCoco
-
-
-
+	chmod +x ./toCoco.py
+	./toCoco
 
 
 .PHONY: github
