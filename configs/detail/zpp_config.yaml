@@ -31,11 +31,11 @@ MODEL:
     SHARE_BOX_FEATURE_EXTRACTOR: False
   KEYPOINT_ON: True
 DATASETS:
-  TRAIN: ("person_keypoints_train2017.json",)
-  TEST: ("person_keypoints_val2017.json",)
+  TRAIN: ("coco_2017_val", "person_keypoints_val2017.json",)
+  # TEST: 
 INPUT:
   MIN_SIZE_TRAIN: (300,)
-  MAX_SIZE_TRAIN: (500,)
+  #MAX_SIZE_TRAIN: (500,)
 DATALOADER:
   SIZE_DIVISIBILITY: 32
 SOLVER:
