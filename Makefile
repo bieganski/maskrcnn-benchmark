@@ -121,11 +121,11 @@ show_dataset_split:
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
 train:
-	if [ -d "./trash" ]; then \
-		cd ./trash && rm -rf *; \
-	else mkdir trash; \
+	if [ -d "./detail_train" ]; then \
+		cd ./detail_train && rm -rf *; \
+	else mkdir detail_train; \
 	fi
-	python3 ./tools/train_net.py --config-file "./configs/pascal_voc/zpp_config.yaml" --skip-test
+	python3 ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
 
 
