@@ -31,7 +31,7 @@ MODEL:
     SHARE_BOX_FEATURE_EXTRACTOR: False
   KEYPOINT_ON: True
 DATASETS:
-  TRAIN: ("coco_2017_val", "person_keypoints_val2017.json",)
+  TRAIN: ("coco_2017_val", "keypoints_coco_2017_val",)
   # TEST: 
 INPUT:
   MIN_SIZE_TRAIN: (300,)
