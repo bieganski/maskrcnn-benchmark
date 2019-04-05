@@ -127,11 +127,9 @@ train:
 	fi
 	python3 ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
-train_multi:
-    export NGPUS=4
-    python -m torch.distributed.launch --nproc_per_node=$NGPUS \
-        ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
-
+multitrain:
+    export NGPUS=4; \
+    python -m torch.distributed.launch --nproc_per_node=$NGPUS ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
 
 to_coco:
