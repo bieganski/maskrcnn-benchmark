@@ -34,21 +34,6 @@ echo "export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64\${LD_LIBRARY_PATH:+:\${LD
 source ~/.bashrc
 echo "You should see nvcc version 9.0"
 nvcc --version
-
-echo "Seting up maskrcnn-benchmark"
-cd ./maskrcnn-benchmark
-echo "Running make in `pwd`"
-make create_venv
-make download
-cd ./pascal/detail-api
-echo "Downlaoding detail dataset to `pwd`"
-wget https://students.mimuw.edu.pl/~kb392558/uploaded/download.tar
-cd ./../..
-make pascal_dload
-conda activate zpp
-echo "Installing dependencies..."
-make install_deps
-echo "Building..."
-make build
-echo "Done! Have a good day, bye."
+echo "You should now use \"source .bashrc\""
+echo "I hope the instalation went well."
 

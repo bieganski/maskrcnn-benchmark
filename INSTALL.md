@@ -77,7 +77,7 @@ Build and run image with built-in jupyter notebook(note that the password is use
 
 ### Option 3: Makefile
 
-You can simply build everything & download all the datasets using makefile:
+You can simply build everything & download detail-api using makefile:
 ```bash
 make prepare_download
 conda activate zpp
@@ -85,12 +85,16 @@ make install_deps
 make build
 ```
 
-Unfortunately, it takes quite some time and downloads a lot of data. However, you can use longer version and comment out unnecessary lines:
+Unfortunately, it takes quite some time and downloads a lot of data. Plus you'll have to  However, you can use longer version and comment out unnecessary lines:
 
 ```bash
 # ---------- make prepare_download ----------
 make create_venv       # Creates conda venv called 'zpp'
 make download           # Download all the github repositories
+cd pascal/detali-api    # Not included in make prepare_downlaod
+wget http://students.mimuw.edu.pl/~kb392558/uploaded/download.tar
+# the above downlaods detali annotations; Not included in make prepare_download
+cd ./../..              # Not included in make prepare_download
 make pascal_dload       # Downloads Pascal in detail datasets
 
 conda activate zpp      # Activates conda venv
