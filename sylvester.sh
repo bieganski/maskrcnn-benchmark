@@ -19,8 +19,23 @@ if [ ${ans} == "n" ]; then
     exit 1
 fi
 ./Anaconda3-2018.12-Linux-x86_64.sh
+echo "Anaconda installed"
 
-echo "Anaconda installed, setting up maskrcnn-benchmark"
+echo "Adding cuda 9.0 to PATH in ~/.bashrc"
+echo "You should make backup of it"
+echo "Proceed? [Y/n]"
+read ans
+if [ ${ans} == "n" ]; then
+    echo "OK, bye"
+    exit 1
+fi
+echo "export PATH=/usr/local/cuda-9.0/bin\${PATH:+:\${PATH}}" >> ~/.bashrc
+echo "export LD_LIBRARY_PATH=/usr/local/cuda-9.0/lib64\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}" >> ~/.bashrc
+source ~/.bashrc
+echo "You should see nvcc version 9.0"
+nvcc --version
+
+echo "Seting up maskrcnn-benchmark"
 cd ./maskrcnn-benchmark
 echo "Running make in `pwd`"
 make create_venv
