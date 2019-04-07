@@ -41,4 +41,5 @@ dist/
 /trash2
 /trash3
 /tococo
+**/*.save*
 
