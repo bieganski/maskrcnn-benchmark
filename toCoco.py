@@ -8,9 +8,9 @@
 import json
 from os.path import join
 
-TRAINVAL_PATH='./pascal'
+TRAINVAL_PATH='./pascal/detail-api'
 DETAIL_ANNS = './trainval_withkeypoints.json'
-OUTPUT_DIR='./tococo'
+OUTPUT_DIR='./pascal'
 
 KPT = 'kpt.json'
 INST = 'inst.json'

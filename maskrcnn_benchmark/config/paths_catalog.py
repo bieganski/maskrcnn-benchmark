@@ -112,28 +112,25 @@ class DatasetCatalog(object):
             "img_dir": "cityscapes/images",
             "ann_file": "cityscapes/annotations/instancesonly_filtered_gtFine_test.json"
         },
-        "detail": {
+        "detail_minimal": {
             "img_dir": "./pascal/VOCdevkit/MINIMAL",
             "ann_file": "./pascal/trainval_withkeypoints.json",
             "split": "train",
+        },
+        "coco_detail_keypoints": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
+            "ann_file": "pascal/kpt.json",
+        },
+        "coco_detail": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
+            "ann_file": "pascal/inst.json",
         },
 
     }
 
     @staticmethod
     def get(name):
-        if "detail" in name:
-            attrs = DatasetCatalog.DATASETS[name]
-            args = dict(
-                data_dir=attrs["data_dir"],
-                ann_file=attrs["ann_file"],
-                split=attrs["split"],
-            )
-            return dict(
-                factory="DetailDataset",
-                args=args,
-            )
-        elif "coco" in name:
+        if "coco" in name:
             data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(
@@ -142,6 +139,17 @@ class DatasetCatalog(object):
             )
             return dict(
                 factory="COCODataset",
+                args=args,
+            )
+        elif "detail" in name:
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(
+                data_dir=attrs["data_dir"],
+                ann_file=attrs["ann_file"],
+                split=attrs["split"],
+            )
+            return dict(
+                factory="DetailDataset",
                 args=args,
             )
         elif "voc" in name:
