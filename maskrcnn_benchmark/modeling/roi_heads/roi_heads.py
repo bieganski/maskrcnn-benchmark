@@ -25,6 +25,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # TODO rename x to roi_box_features, if it doesn't increase memory consumption
         x, detections, loss_box = self.box(features, proposals, targets)
         losses.update(loss_box)
+        # detections = proposals
         if self.cfg.MODEL.MASK_ON:
             mask_features = features
             # optimization: during training, if we share the feature extractor between

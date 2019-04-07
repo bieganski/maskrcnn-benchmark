@@ -115,7 +115,7 @@ class FastRCNNLossComputation(object):
         self._proposals = proposals
         return proposals
 
-    def __call__(self, class_logits, box_regression):
+    def __call__(self, class_logits):
         """
         Computes the loss for Faster R-CNN.
         This requires that the subsample method has been called beforehand.
@@ -130,7 +130,7 @@ class FastRCNNLossComputation(object):
         """
 
         class_logits = cat(class_logits, dim=0)
-        box_regression = cat(box_regression, dim=0)
+        # box_regression = cat(box_regression, dim=0)
         device = class_logits.device
 
         if not hasattr(self, "_proposals"):
@@ -139,32 +139,32 @@ class FastRCNNLossComputation(object):
         proposals = self._proposals
 
         labels = cat([proposal.get_field("labels") for proposal in proposals], dim=0)
-        regression_targets = cat(
-            [proposal.get_field("regression_targets") for proposal in proposals], dim=0
-        )
+        # regression_targets = cat(
+        #     [proposal.get_field("regression_targets") for proposal in proposals], dim=0
+        # )
 
         classification_loss = F.cross_entropy(class_logits, labels)
 
         # get indices that correspond to the regression targets for
         # the corresponding ground truth labels, to be used with
         # advanced indexing
-        sampled_pos_inds_subset = torch.nonzero(labels > 0).squeeze(1)
-        labels_pos = labels[sampled_pos_inds_subset]
-        if self.cls_agnostic_bbox_reg:
-            map_inds = torch.tensor([4, 5, 6, 7], device=device)
-        else:
-            map_inds = 4 * labels_pos[:, None] + torch.tensor(
-                [0, 1, 2, 3], device=device)
+        # sampled_pos_inds_subset = torch.nonzero(labels > 0).squeeze(1)
+        # labels_pos = labels[sampled_pos_inds_subset]
+        # if self.cls_agnostic_bbox_reg:
+        #     map_inds = torch.tensor([4, 5, 6, 7], device=device)
+        # else:
+        #     map_inds = 4 * labels_pos[:, None] + torch.tensor(
+        #         [0, 1, 2, 3], device=device)
 
-        box_loss = smooth_l1_loss(
-            box_regression[sampled_pos_inds_subset[:, None], map_inds],
-            regression_targets[sampled_pos_inds_subset],
-            size_average=False,
-            beta=1,
-        )
-        box_loss = box_loss / labels.numel()
+        # box_loss = smooth_l1_loss(
+        #     box_regression[sampled_pos_inds_subset[:, None], map_inds],
+        #     regression_targets[sampled_pos_inds_subset],
+        #     size_average=False,
+        #     beta=1,
+        # )
+        # box_loss = box_loss / labels.numel()
 
-        return classification_loss, box_loss
+        return classification_loss
 
 
 def make_classification_loss_evaluator(cfg):

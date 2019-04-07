@@ -11,23 +11,26 @@ class FPNPredictor(nn.Module):
         representation_size = in_channels
 
         self.cls_score = nn.Linear(representation_size, num_classes)
-        num_bbox_reg_classes = 2 if cfg.MODEL.CLS_AGNOSTIC_BBOX_REG else num_classes
-        self.bbox_pred = nn.Linear(representation_size, num_bbox_reg_classes * 4)
+        # num_bbox_reg_classes = 2 if cfg.MODEL.CLS_AGNOSTIC_BBOX_REG else num_classes
+        # self.bbox_pred = nn.Linear(representation_size, num_bbox_reg_classes * 4)
 
         nn.init.normal_(self.cls_score.weight, std=0.01)
-        nn.init.normal_(self.bbox_pred.weight, std=0.001)
-        for l in [self.cls_score, self.bbox_pred]:
+        # nn.init.normal_(self.bbox_pred.weight, std=0.001)
+        # for l in [self.cls_score, self.bbox_pred]:
+        #     nn.init.constant_(l.bias, 0)
+        for l in [self.cls_score]:
             nn.init.constant_(l.bias, 0)
+
 
     def forward(self, x):
         if x.ndimension() == 4:
             assert list(x.shape[2:]) == [1, 1]
             x = x.view(x.size(0), -1)
         scores = self.cls_score(x)
-        bbox_deltas = self.bbox_pred(x)
+        # bbox_deltas = self.bbox_pred(x)
 
-        return scores, bbox_deltas
-
+        # return scores, bbox_deltas
+        return scores
 
 def make_classification_predictor(cfg, in_channels):
     func = registry.CLASSIFICATION_PREDICTOR[cfg.MODEL.CLASSIFICATION_HEAD.PREDICTOR]
