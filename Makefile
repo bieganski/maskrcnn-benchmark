@@ -128,8 +128,12 @@ train:
 	python3 ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
 multitrain:
-    export NGPUS=4; \
-    python -m torch.distributed.launch --nproc_per_node=$NGPUS ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
+	if [ -d "./trash3" ]; then \
+		cd ./trash3 && rm -rf *; \
+	else mkdir trash3; \
+	fi
+	export NGPUS=4; \
+	python -m torch.distributed.launch --nproc_per_node=$NGPUS ./tools/train_net.py --config-file "./configs/detail/zpp_config_4GPU.yaml"
 
 
 to_coco:
