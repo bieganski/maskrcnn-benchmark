@@ -31,9 +31,8 @@ MODEL:
     SHARE_BOX_FEATURE_EXTRACTOR: False
   KEYPOINT_ON: True
 DATASETS:
-#  TRAIN: ("coco_2017_val", "keypoints_coco_2017_val",)
-  TRAIN: ("keypoints_coco_2017_val",)
-  # TEST:
+  TRAIN: ("keypoints_coco_2014_train", "keypoints_coco_2014_valminusminival",)
+  TEST: ("keypoints_coco_2014_minival",)
 INPUT:
   MAX_SIZE_TEST: 300
   MIN_SIZE_TEST: 100
