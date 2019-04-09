@@ -96,27 +96,22 @@ def _create_flip_indices(names, flip_map):
 
 class PersonKeypoints(Keypoints):
     NAMES = [
-        'nose',
-        'left_eye',
-        'right_eye',
-        'left_ear',
-        'right_ear',
+        'head',
+        'neck',
         'left_shoulder',
-        'right_shoulder',
         'left_elbow',
-        'right_elbow',
         'left_wrist',
-        'right_wrist',
         'left_hip',
-        'right_hip',
         'left_knee',
-        'right_knee',
         'left_ankle',
+        'right_shoulder',
+        'right_elbow',
+        'right_wrist',
+        'right_hip',
+        'right_knee',
         'right_ankle'
     ]
     FLIP_MAP = {
-        'left_eye': 'right_eye',
-        'left_ear': 'right_ear',
         'left_shoulder': 'right_shoulder',
         'left_elbow': 'right_elbow',
         'left_wrist': 'right_wrist',
@@ -130,11 +125,9 @@ class PersonKeypoints(Keypoints):
 PersonKeypoints.FLIP_INDS = _create_flip_indices(PersonKeypoints.NAMES, PersonKeypoints.FLIP_MAP)
 def kp_connections(keypoints):
     kp_lines = [
-        [keypoints.index('left_eye'), keypoints.index('right_eye')],
-        [keypoints.index('left_eye'), keypoints.index('nose')],
-        [keypoints.index('right_eye'), keypoints.index('nose')],
-        [keypoints.index('right_eye'), keypoints.index('right_ear')],
-        [keypoints.index('left_eye'), keypoints.index('left_ear')],
+        [keypoints.index('head'), keypoints.index('neck')],
+        [keypoints.index('neck'), keypoints.index('left_shoulder')],
+        [keypoints.index('neck'), keypoints.index('right_shoulder')],
         [keypoints.index('right_shoulder'), keypoints.index('right_elbow')],
         [keypoints.index('right_elbow'), keypoints.index('right_wrist')],
         [keypoints.index('left_shoulder'), keypoints.index('left_elbow')],

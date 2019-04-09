@@ -125,6 +125,7 @@ class DetailToCoco:
         for kpt_obj in kpts:
             kpt_obj['segmentation'] = [[]]
             kpt_obj['id'] = id
+            kpt_obj['iscrowd'] = 0
             id += 1
         return kpts
 
@@ -137,8 +138,12 @@ class DetailToCoco:
     def to_dict(self, annFun, cats):
         res = dict()
         res['info'] = self.d['info']
-        res['images'] = self.d['images']
+        # res['images'] = self.d['images']
         res['annotations'] = annFun()
+        img_set = set()
+        for ann in res['annotations']:
+          img_set.add(ann['image_id'])
+        res['images'] = [x for x in self.d['images'] if x['id'] in img_set]
         res['categories'] = cats
         return res
 

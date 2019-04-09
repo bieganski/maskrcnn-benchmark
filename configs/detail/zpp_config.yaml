@@ -29,9 +29,11 @@ MODEL:
     POOLER_SAMPLING_RATIO: 2
     RESOLUTION: 56
     SHARE_BOX_FEATURE_EXTRACTOR: False
+    NUM_CLASSES : 14
   KEYPOINT_ON: True
 DATASETS:
-   TRAIN: ("keypoints_coco_2014_train",)
+  TRAIN: ("coco_detail_keypoints",)
+#   TRAIN: ("keypoints_coco_2014_train",)
 #  TRAIN: ("coco_2017_val", "keypoints_coco_2017_val",)
 #  TRAIN: ("keypoints_coco_2017_val",)
 #  TEST:

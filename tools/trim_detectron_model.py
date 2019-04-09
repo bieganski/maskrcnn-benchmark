@@ -41,8 +41,8 @@ print('detectron path: {}'.format(DETECTRON_PATH))
 cfg.merge_from_file(args.cfg)
 _d = load_c2_format(cfg, DETECTRON_PATH)
 newdict = _d
-
+# roi_heads.keypoint.predictor.kps_score_lowres.weight
 newdict['model'] = removekey(_d['model'],
-                             ['cls_score.bias', 'cls_score.weight', 'bbox_pred.bias', 'bbox_pred.weight'])
+                             ['cls_score.bias', 'cls_score.weight', 'bbox_pred.bias', 'bbox_pred.weight', 'kps_score_lowres.weight', 'kps_score_lowres.bias'])
 torch.save(newdict, args.save_path)
 print('saved to {}.'.format(args.save_path))
