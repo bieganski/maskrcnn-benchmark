@@ -25,15 +25,18 @@ def has_valid_annotation(anno):
     # if all boxes have close to zero area, there is no annotation
     if _has_only_empty_bbox(anno):
         return False
-    # keypoints task have a slight different critera for considering
-    # if an annotation is valid
-    if "keypoints" not in anno[0]:
-        return True
-    # for keypoint detection tasks, only consider valid images those
-    # containing at least min_keypoints_per_image
-    if _count_visible_keypoints(anno) >= min_keypoints_per_image:
-        return True
-    return False
+    # we don't care here whether keypoints are present, 'cause we will check for them in roi_heads.py
+    return True
+
+    # # keypoints task have a slight different critera for considering
+    # # if an annotation is valid
+    # if "keypoints" not in anno[0]:
+    #     return True
+    # # for keypoint detection tasks, only consider valid images those
+    # # containing at least min_keypoints_per_image
+    # if _count_visible_keypoints(anno) >= min_keypoints_per_image:
+    #     return True
+    # return False
 
 
 class COCODataset(torchvision.datasets.coco.CocoDetection):
@@ -83,8 +86,8 @@ class COCODataset(torchvision.datasets.coco.CocoDetection):
         masks = SegmentationMask(masks, img.size)
         target.add_field("masks", masks)
 
-        if anno and "keypoints" in anno[0]:
-            keypoints = [obj["keypoints"] for obj in anno]
+        if anno:
+            keypoints = [obj["keypoints"] for obj in anno if "keypoints" in obj]
             keypoints = PersonKeypoints(keypoints, img.size)
             target.add_field("keypoints", keypoints)
 

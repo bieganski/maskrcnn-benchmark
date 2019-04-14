@@ -1,10 +1,5 @@
 #!/usr/bin/python3
 
-# TODO
-# ########### ISSUES
-# showAnns for segmentation all in one colour
-
-
 import json
 from os.path import join
 
@@ -12,54 +7,9 @@ TRAINVAL_PATH='./pascal/detail-api'
 DETAIL_ANNS = './trainval_withkeypoints.json'
 OUTPUT_DIR='./pascal'
 
-KPT = 'kpt.json'
-INST = 'inst.json'
+OUTPUT = 'kpt.json'
 
 class DetailToCoco:
-    # TODO ukradzione wprost z COCOAPI, liczę, że pokrywa się z detail api
-    # edit: nie pokrywa się z detail, bowiem keypointy COCO mają po 17 punktów,
-    # natomiast keypyointy detailowe mają tylko 14 (brakuje oczu i uszu),
-    # dlatego nie będziemy ich używać, napiszemy swoje na podstawie tych detailowych.
-    KPT_CATS = [{'supercategory': 'person',
-                 'id': 1,
-                 'name': 'person',
-                 'keypoints': ['nose',
-                               'left_eye',
-                               'right_eye',
-                               'left_ear',
-                               'right_ear',
-                               'left_shoulder',
-                               'right_shoulder',
-                               'left_elbow',
-                               'right_elbow',
-                               'left_wrist',
-                               'right_wrist',
-                               'left_hip',
-                               'right_hip',
-                               'left_knee',
-                               'right_knee',
-                               'left_ankle',
-                               'right_ankle'],
-                 'skeleton': [[16, 14],
-                              [14, 12],
-                              [17, 15],
-                              [15, 13],
-                              [12, 13],
-                              [6, 12],
-                              [7, 13],
-                              [6, 7],
-                              [6, 8],
-                              [7, 9],
-                              [8, 10],
-                              [9, 11],
-                              [2, 3],
-                              [1, 2],
-                              [1, 3],
-                              [2, 4],
-                              [3, 5],
-                              [4, 6],
-                              [5, 7]]}]
-
     # real detail keypoints
     HEAD = 1
     NECK = 2
@@ -127,19 +77,31 @@ class DetailToCoco:
             kpt_obj['id'] = id
             kpt_obj['iscrowd'] = 0
             id += 1
+        print(len(kpts))
+        print(type(kpts))
         return kpts
 
     def convert_instances(self):
         segm = self.d['annos_segmentation']  # contains semgmentation and bboxes
         for el in segm:
-            el['iscrowd'] = 1  # sometimes it is 0 wtf
+            el['segmentation'] = [[]]
+            el['iscrowd'] = 0  # sometimes it is 0 wtf
+            el["keypoints"] = 42*[0]
+            el['num_keypoints'] = 0
+        print(len(segm))
+        print(type(segm))
         return segm
 
-    def to_dict(self, annFun, cats):
+    def mergeeeeeee(self):
+       a = self.convert_kpts()
+       a.extend(self.convert_instances())
+       return a
+
+    def to_dict(self, cats):
         res = dict()
         res['info'] = self.d['info']
         # res['images'] = self.d['images']
-        res['annotations'] = annFun()
+        res['annotations'] = self.mergeeeeeee()
         img_set = set()
         for ann in res['annotations']:
           img_set.add(ann['image_id'])
@@ -147,18 +109,12 @@ class DetailToCoco:
         res['categories'] = cats
         return res
 
-    def dumpKpt(self):
-        kpts = self.to_dict(self.convert_kpts, self.INST_CATS)
-        with open(join(OUTPUT_DIR, KPT), 'w') as outfile:
-            json.dump(kpts, outfile)
-
-    def dumpInst(self):
-        inst = self.to_dict(self.convert_instances, self.INST_CATS)
-        with open(join(OUTPUT_DIR, INST), 'w') as outfile:
-            json.dump(inst, outfile)
+    def dump(self):
+        output = self.to_dict(self.INST_CATS)
+        with open(join(OUTPUT_DIR, OUTPUT), 'w') as outfile:
+            json.dump(output, outfile)
 
 
 if __name__ == '__main__':
     dc = DetailToCoco()
-    dc.dumpInst()
-    dc.dumpKpt()
+    dc.dump()
