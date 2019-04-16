@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
 import json
+import cv2
+import numpy as np
+from pycocotools import mask
+from skimage import measure
+from detail import mask as maskUtils
 from os.path import join
 
 TRAINVAL_PATH='./pascal/detail-api'
@@ -8,6 +13,28 @@ DETAIL_ANNS = './trainval_withkeypoints.json'
 OUTPUT_DIR='./pascal'
 
 OUTPUT = 'kpt.json'
+
+def compressedRLEtoPolys(segmentation):
+    mask_list = maskUtils.decode(segmentation)
+    ground_truth_binary_mask = mask_list
+    fortran_ground_truth_binary_mask = np.asfortranarray(ground_truth_binary_mask)
+    encoded_ground_truth = mask.encode(fortran_ground_truth_binary_mask)
+    ground_truth_area = mask.area(encoded_ground_truth)
+    ground_truth_bounding_box = mask.toBbox(encoded_ground_truth)
+    contours = measure.find_contours(ground_truth_binary_mask, 0.5)
+
+    annotation = {
+            "segmentation": [],
+            "area": ground_truth_area.tolist(),
+            "bbox": ground_truth_bounding_box.tolist()
+        }
+
+    for contour in contours:
+        contour = np.flip(contour, axis=1)
+        segmentation = contour.ravel().tolist()
+        annotation["segmentation"].append(segmentation)
+        
+    return annotation
 
 class DetailToCoco:
     # real detail keypoints
@@ -56,7 +83,7 @@ class DetailToCoco:
             cat['id'] = cat['category_id']
             del cat['category_id']
             if cat['name'] == 'person':
-                cat['skeleton'] = self.REAL_KPTS # self.KPT_CATS[0]['skeleton'] <-- that one sucks (14 vs 17)
+                cat['skeleton'] = self.REAL_KPTS
         self.change_id_format()
 
 
@@ -78,18 +105,25 @@ class DetailToCoco:
             kpt_obj['iscrowd'] = 0
             id += 1
         print(len(kpts))
-        print(type(kpts))
         return kpts
 
     def convert_instances(self):
-        segm = self.d['annos_segmentation']  # contains semgmentation and bboxes
+        segm = self.d['annos_segmentation']
         for el in segm:
-            el['segmentation'] = [[]]
-            el['iscrowd'] = 0  # sometimes it is 0 wtf
+            poly_segm_anno = compressedRLEtoPolys(el['segmentation'])
+            el['segmentation'] = poly_segm_anno['segmentation']
+            
+            # full check is ommitted because sometimes estimated bbox size differs from the ground truth one
+            # and we should probably stick to the one given; area is always ok
+            # if we use only segmentation we can make
+            # compressedRLEtoPolys return only that
+            assert el['area'] == poly_segm_anno['area']
+            # assert el['area'] == segm['area'] and el['bbox'] == segm['bbox']
+            
+            el['iscrowd'] = 0
             el["keypoints"] = 42*[0]
             el['num_keypoints'] = 0
         print(len(segm))
-        print(type(segm))
         return segm
 
     def mergeeeeeee(self):
@@ -100,7 +134,6 @@ class DetailToCoco:
     def to_dict(self, cats):
         res = dict()
         res['info'] = self.d['info']
-        # res['images'] = self.d['images']
         res['annotations'] = self.mergeeeeeee()
         img_set = set()
         for ann in res['annotations']:
