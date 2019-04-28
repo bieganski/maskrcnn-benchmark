@@ -101,7 +101,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
 
-        
+
         # targets = box_targets
         # TODO rename x to roi_box_features, if it doesn't increase memory consumption
         x, detections, loss_box = self.box(features, proposals, targets)
@@ -120,13 +120,13 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             ids = []
             for index, boxlist in enumerate(targets):
                 sgms = boxlist.get_field('masks')
+                valid = False
                 for poly in sgms.polygons:
-                    valid = False
                     for inner_poly in poly.polygons:
                         if len(inner_poly) > 4:
                             valid = True        
-                    if valid:
-                        ids.append(index)
+                if valid:
+                    ids.append(index)
 
             filtered_mask_features = [mask_features[index] for index in ids]
             filtered_mask_detections = [detections[index] for index in ids]
