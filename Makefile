@@ -140,6 +140,10 @@ to_coco:
 	chmod +x ./toCoco.py
 	./toCoco
 
+dload_weights:
+	wget http://students.mimuw.edu.pl/~mb385162/new_keypoint_weights.pth;
+	mv new_keypoint_weights.pth ./configs/detail
+
 
 .PHONY: github
 .PHONY: pascal
