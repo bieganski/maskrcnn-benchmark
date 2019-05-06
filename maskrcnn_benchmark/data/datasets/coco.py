@@ -86,6 +86,10 @@ class COCODataset(torchvision.datasets.coco.CocoDetection):
         masks = SegmentationMask(masks, img.size)
         target.add_field("masks", masks)
 
+        # TODO assert (isinstance(imgmask, torch.Tensor))
+        # TODO assert (list(imgmask.size()) == list(img.size))
+        # TODO  target.add_field("imgmask", imgmask) (maska dla semantic segmentation)
+
         if anno:
             keypoints = [obj["keypoints"] for obj in anno if "keypoints" in obj]
             keypoints = PersonKeypoints(keypoints, img.size)
