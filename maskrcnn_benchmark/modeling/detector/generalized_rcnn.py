@@ -50,7 +50,7 @@ class GeneralizedRCNN(nn.Module):
         # type(features) = tuple
         # print(features)
         for el in features:
-            print(type(el))
+            print(el.size())
         exit(1)
         proposals, proposal_losses = self.rpn(images, features, targets)
         if self.roi_heads:
