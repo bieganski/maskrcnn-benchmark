@@ -48,7 +48,7 @@ class GeneralizedRCNN(nn.Module):
         images = to_image_list(images)
         features = self.backbone(images.tensors)
         # type(features) = tuple
-        print(features.size)
+        print(features)
         exit(1)
         proposals, proposal_losses = self.rpn(images, features, targets)
         if self.roi_heads:
