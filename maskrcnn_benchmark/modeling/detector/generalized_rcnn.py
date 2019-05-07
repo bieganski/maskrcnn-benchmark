@@ -62,9 +62,9 @@ class GeneralizedRCNN(nn.Module):
         #   torch.Size([2, 256, 10, 8])
         #   torch.Size([2, 256, 5, 4])
         #   torch.Size([2, 256, 3, 2])
-        # for el in features:
-        #     print(el.size())
-        # exit(1)
+        for el in features:
+            print(el.size())
+        exit(1)
         proposals, proposal_losses = self.rpn(images, features, targets)
         if self.roi_heads:
             x, result, detector_losses = self.roi_heads(features, proposals, targets)
