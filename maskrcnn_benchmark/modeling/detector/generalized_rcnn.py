@@ -49,9 +49,15 @@ class GeneralizedRCNN(nn.Module):
         features = self.backbone(images.tensors)
         # type(features) = tuple
         # print(features)
-        for el in features:
-            print(el.size())
-        exit(1)
+        # C4 extractor:
+        #   torch.Size([2, 256, 32, 40])
+        #   torch.Size([2, 256, 16, 20])
+        #   torch.Size([2, 256, 8, 10])
+        #   torch.Size([2, 256, 4, 5])
+        #   torch.Size([2, 256, 2, 3])
+        # for el in features:
+        #     print(el.size())
+        # exit(1)
         proposals, proposal_losses = self.rpn(images, features, targets)
         if self.roi_heads:
             x, result, detector_losses = self.roi_heads(features, proposals, targets)
