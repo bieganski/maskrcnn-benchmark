@@ -47,7 +47,7 @@ class GeneralizedRCNN(nn.Module):
             raise ValueError("In training mode, targets should be passed")
         images = to_image_list(images)
         features = self.backbone(images.tensors)
-        print(images)
+        print(images.image_sizes)
         # type(features) = tuple
         # print(features)
         # C4 extractor:
