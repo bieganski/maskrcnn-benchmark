@@ -47,7 +47,7 @@ class GeneralizedRCNN(nn.Module):
             raise ValueError("In training mode, targets should be passed")
         images = to_image_list(images)
         features = self.backbone(images.tensors)
-        print(images.image_sizes)
+        print(images.image_sizes) # height, width [torch.Size([133, 100]), torch.Size([152, 100])]
         print(">>>>>>>>>>>>>")
         print(targets)
         print("<<<<<<<<<<<<<")

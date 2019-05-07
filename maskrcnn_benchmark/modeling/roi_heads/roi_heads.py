@@ -101,6 +101,10 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
 
+        # semantic segmentation does not need boxes
+        if self.cfg.MODEL.IMAGEMASK_ON:
+            pass
+
 
         # targets = box_targets
         # TODO rename x to roi_box_features, if it doesn't increase memory consumption

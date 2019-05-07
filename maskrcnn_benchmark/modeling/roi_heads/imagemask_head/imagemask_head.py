@@ -1,5 +1,6 @@
 import torch
 
+from .roi_imagemask_feature_extractor import ImageMaskRCNNFeatureExtractor
 
 class ImageMaskHead(torch.nn.Module):
     def __init__(self, cfg, in_channels):
@@ -14,7 +15,7 @@ class ImageMaskHead(torch.nn.Module):
     def forward(self, features, proposals, targets=None):
         """
         Arguments:
-            features (list[Tensor]): feature-maps from possibly several levels
+            features (tuple[Tensor]): feature-maps from possibly several levels
             proposals (list[BoxList]): proposal boxes
             targets (list[BoxList], optional): the ground-truth targets.
 

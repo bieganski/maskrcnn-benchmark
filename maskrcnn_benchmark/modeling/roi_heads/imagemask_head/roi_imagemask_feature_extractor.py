@@ -17,3 +17,10 @@ class ImageMaskRCNNFeatureExtractor(nn.Module):
     # i liczy loss.
     def forward(self, x, features):
         pass
+
+
+def make_roi_keypoint_feature_extractor(cfg, in_channels):
+    func = registry.ROI_IMAGEMASK_FEATURE_EXTRACTORS[
+        cfg.MODEL.ROI_KEYPOINT_HEAD.FEATURE_EXTRACTOR
+    ]
+    return func(cfg, in_channels)
