@@ -48,6 +48,9 @@ class GeneralizedRCNN(nn.Module):
         images = to_image_list(images)
         features = self.backbone(images.tensors)
         print(images.image_sizes)
+        print(">>>>>>>>>>>>>")
+        print(targets)
+        print("<<<<<<<<<<<<<")
         # type(features) = tuple
         # print(features)
         # C4 extractor:
