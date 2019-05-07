@@ -103,8 +103,11 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
-            pass
-
+            assert(features[0].size()[0] == 1, "BATCH SIZE OF {} ERROR: "
+                                               "Semantic Segmentation works on single batch, "
+                                               "due to resizing FPN output".format(features[0].size()[0]))
+            y, loss_imagemask = self.imagemask(features, targets)
+            losses.update(loss_imagemask)
 
         # targets = box_targets
         # TODO rename x to roi_box_features, if it doesn't increase memory consumption

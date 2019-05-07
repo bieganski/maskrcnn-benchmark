@@ -1,12 +1,14 @@
 import torch
 
-from .roi_imagemask_feature_extractor import ImageMaskRCNNFeatureExtractor
+from .roi_imagemask_feature_extractor import make_roi_keypoint_feature_extractor
 
 class ImageMaskHead(torch.nn.Module):
     def __init__(self, cfg, in_channels):
         super(ImageMaskHead, self).__init__()
         self.cfg = cfg.clone()
-        # self.feature_extractor = make_roi_keypoint_feature_extractor(cfg, in_channels)
+        self.feature_extractor = make_roi_keypoint_feature_extractor(cfg,
+                                                                     in_channels,
+                                                                     cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES)
         # self.predictor = make_roi_keypoint_predictor(
         #     cfg, self.feature_extractor.out_channels)
         # self.post_processor = make_roi_keypoint_post_processor(cfg)

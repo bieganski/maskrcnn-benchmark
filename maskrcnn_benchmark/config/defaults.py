@@ -248,6 +248,7 @@ _C.MODEL.ROI_KEYPOINT_HEAD.SHARE_BOX_FEATURE_EXTRACTOR = True
 
 _C.MODEL.ROI_IMAGEMASK_HEAD = CN()
 _C.MODEL.ROI_IMAGEMASK_HEAD.FEATURE_EXTRACTOR = "ImageMaskRCNNFeatureExtractor"
+_C.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES = 5 # TODO
 # ---------------------------------------------------------------------------- #
 # ResNe[X]t options (ResNets = {ResNet, ResNeXt}
 # Note that parts of a resnet may be used for both the backbone and the head
