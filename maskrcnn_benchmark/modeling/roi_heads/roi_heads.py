@@ -115,7 +115,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         ################### TODO
 
         print(losses)
-        exit(1)
+        return y, None, losses
 
         ###################
 
