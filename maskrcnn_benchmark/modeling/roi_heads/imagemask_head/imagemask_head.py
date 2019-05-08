@@ -5,43 +5,51 @@ from .roi_imagemask_predictors import make_roi_imagemask_predictor
 from .loss import make_roi_imagemask_loss_evaluator
 
 class ImageMaskHead(torch.nn.Module):
-    def __init__(self, cfg, in_channels):
+    def __init__(self, cfg):
         super(ImageMaskHead, self).__init__()
         self.cfg = cfg.clone()
-        self.predictor = make_roi_imagemask_predictor(cfg)
+        self.predictor = make_roi_imagemask_predictor(cfg) # (1 x K x 128 x 128)
         self.loss_evaluator = make_roi_imagemask_loss_evaluator(cfg)
+
+    def _to_proposal(self, x):
+        # x - (128, 128, K), where K is num classes (detail - 459)
+        # return - proposal (128, 128, 1), where proposal[i, j] = k iff pixel`s (i, j) class is k
+        assert x.size()[-1] == self.cfg.ROI_IMAGEMASK_HEAD.NUM_CLASSES
+        proposal = torch.max(x, dim=-1)[1]
+        assert list(proposal.size()) == [x.size()[0],x.size()[1],1]
 
     def forward(self, features, img_sizes, targets=None):
         """
         Arguments:
             features (tuple[Tensor]): feature-maps from possibly several levels
-            features (list(Int, Int)): [(W, H)], but len(lst) == 1 # TODO
+            img_sizes (list(Int, Int)): [(W, H)], but temporarily len(lst) == 1 # TODO
             targets (list[BoxList], optional): the ground-truth targets.
 
         Returns:
             x (Tensor): the result of the feature extractor
-            proposals (list[BoxList]): during training, the original proposals
+            proposal (Tensor): during training, the original proposals
                 are returned. During testing, the predicted boxlists are returned
                 with the `mask` field set
             losses (dict[Tensor]): During training, returns the losses for the
                 head. During testing, returns an empty dict.
         """
         # features - sth like (tensor[1,256,_w,_h],,)
-        assert(features.size()[0] == 1) # only single batch supported
+        assert(features[0].size()[0] == 1) # only single batch supported
         # assert(targets.size()[0] == 1) # only single batch supported
 
 
         x = self.predictor(features, img_sizes)
 
-        if self.training:
-
+        proposal = self._to_proposal(x)
 
         if self.training:
             assert targets is not None
             assert len(targets) == 1 # single batch
+            loss_imagemask = self.loss_evaluator(x, targets)
+            return x, proposal, dict(loss_imagemask=loss_imagemask)
 
-
-
+        return x, proposal, {}
 
 def build_roi_imagemask_head(cfg, in_channels):
-    return ImageMaskHead(cfg, in_channels)
+    assert in_channels == cfg.MODEL.RESNETS.RES2_OUT_CHANNELS # 256
+    return ImageMaskHead(cfg)
