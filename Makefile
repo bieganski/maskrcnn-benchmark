@@ -121,9 +121,9 @@ show_dataset_split:
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
 train:
-	if [ -d "./trash" ]; then \
-		cd ./trash && rm -rf *; \
-	else mkdir trash; \
+	if [ -d "./trash2" ]; then \
+		cd ./trash2 && rm -rf *; \
+	else mkdir trash2; \
 	fi
 	python3 ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
