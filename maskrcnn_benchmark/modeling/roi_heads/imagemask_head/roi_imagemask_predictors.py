@@ -23,6 +23,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
         # TODO nie biore argumentu 'features', dobrze?
         # (to nie ma tak że dobrze albo niedobrze)
         # x[0] = sth. like torch.Size([1, 256, 40, 32])
+        x = x[0]
         assert (( x.size()[-2] <= x.size()[-1] ) == ( img_size[0] <= img_size[1] ))
         x = self.interp(x, size=img_size, mode='nearest')
         print("---------------------------------------------------------------------------")
