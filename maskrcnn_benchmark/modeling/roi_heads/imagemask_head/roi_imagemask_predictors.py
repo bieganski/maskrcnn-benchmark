@@ -19,11 +19,15 @@ class MaskRCNNImageMakPredictor(nn.Module):
     # Semantyczna segmentacja nie używa proposali z sieci RPN -
     # bierze bezpośrednio output z FPN, upsampluje do rozmiaru obrazka
     # i liczy loss.
-    def forward(self, x, img_size): # TODO nie biore argumentu 'features', dobrze?
-                                    # (to nie ma tak że dobrze albo niedobrze)
+    def forward(self, x, img_size):
+        # TODO nie biore argumentu 'features', dobrze?
+        # (to nie ma tak że dobrze albo niedobrze)
         # x[0] = sth. like torch.Size([1, 256, 40, 32])
-        assert ( x.size()[-2] <= x.size()[-1] ) == ( img_size[0] <= img_size[1] )
+        assert (( x.size()[-2] <= x.size()[-1] ) == ( img_size[0] <= img_size[1] ))
         x = self.interp(x, size=img_size, mode='nearest')
+        print("---------------------------------------------------------------------------")
+        print(x.size())
+        print("---------------------------------------------------------------------------")
         x = self.conv1(x)
         assert list(x.size()) == [1, self.num_cls, img_size[0], img_size[1]]
         return x
