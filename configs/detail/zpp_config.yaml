@@ -43,7 +43,7 @@ MODEL:
     NUM_CLASSES: 459 # TODO, w detailu jest 0-458, ale chyba nie przeszkadza jak ulatwimy indeksowanie +1)
   KEYPOINT_ON: True
   MASK_ON: True
-  IMAGEMASK_ON: False
+  IMAGEMASK_ON: True
 DATASETS:
   TRAIN: ("coco_detail_keypoints",)
 #   TRAIN: ("keypoints_coco_2014_train",)
