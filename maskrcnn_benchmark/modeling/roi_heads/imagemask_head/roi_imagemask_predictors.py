@@ -6,12 +6,13 @@ from maskrcnn_benchmark.modeling import registry
 
 @registry.ROI_IMAGEMASK_PREDICTOR.register("MaskRCNNFPNImageMaskPredictor")
 class MaskRCNNImageMakPredictor(nn.Module):
-    def __init__(self, cfg, num_cls):
+    def __init__(self, cfg):
         super(MaskRCNNImageMakPredictor, self).__init__()
         self.cfg = cfg
         self.in_channels = cfg.MODEL.RESNETS.RES2_OUT_CHANNELS
         assert self.in_channels == 256
-        self.num_cls = num_cls
+        self.num_cls = cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
+        assert self.num_cls == 459
         self.interp = F.interpolate
         self.conv1 = nn.Conv2d(self.in_channels, self.num_cls, kernel_size=1)
 
@@ -28,8 +29,8 @@ class MaskRCNNImageMakPredictor(nn.Module):
         return x
 
 
-def make_roi_imagemask_predictor(cfg, in_channels, num_cls):
+def make_roi_imagemask_predictor(cfg):
     func = registry.ROI_IMAGEMASK_PREDICTOR[
         cfg.MODEL.ROI_IMAGEMASK_PREDICTOR
     ]
-    return func(cfg, in_channels, num_cls)
+    return func(cfg)

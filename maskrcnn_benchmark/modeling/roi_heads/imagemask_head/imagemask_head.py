@@ -8,14 +8,14 @@ class ImageMaskHead(torch.nn.Module):
     def __init__(self, cfg, in_channels):
         super(ImageMaskHead, self).__init__()
         self.cfg = cfg.clone()
-        self.predictor = make_roi_imagemask_predictor(cfg, in_channels, cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES)
+        self.predictor = make_roi_imagemask_predictor(cfg)
         self.loss_evaluator = make_roi_imagemask_loss_evaluator(cfg)
 
-    def forward(self, features, proposals, targets=None):
+    def forward(self, features, img_sizes, targets=None):
         """
         Arguments:
             features (tuple[Tensor]): feature-maps from possibly several levels
-            proposals (list[BoxList]): proposal boxes
+            features (list(Int, Int)): [(W, H)], but len(lst) == 1 # TODO
             targets (list[BoxList], optional): the ground-truth targets.
 
         Returns:
@@ -26,22 +26,21 @@ class ImageMaskHead(torch.nn.Module):
             losses (dict[Tensor]): During training, returns the losses for the
                 head. During testing, returns an empty dict.
         """
-        assert(targets.size()[0] == 1) # only single batch supported
+        # features - sth like (tensor[1,256,_w,_h],,)
+        assert(features.size()[0] == 1) # only single batch supported
+        # assert(targets.size()[0] == 1) # only single batch supported
 
-        # if self.training:
-        #     with torch.no_grad():
-        #         proposals = self.loss_evaluator.subsample(proposals, targets)
-        #
-        # x = self.feature_extractor(features, proposals)
-        # kp_logits = self.predictor(x)
-        #
-        # if not self.training:
-        #     result = self.post_processor(kp_logits, proposals)
-        #     return x, result, {}
-        #
-        # loss_kp = self.loss_evaluator(proposals, kp_logits)
-        #
-        # return x, proposals, dict(loss_kp=loss_kp)
+
+        x = self.predictor(features, img_sizes)
+
+        if self.training:
+
+
+        if self.training:
+            assert targets is not None
+            assert len(targets) == 1 # single batch
+
+
 
 
 def build_roi_imagemask_head(cfg, in_channels):

@@ -39,8 +39,8 @@ MODEL:
     RESOLUTION: 14
     SHARE_BOX_FEATURE_EXTRACTOR: False
   ROI_IMAGEMASK_HEAD:
-    FEATURE_EXTRACTOR: "ImageMaskRCNNFeatureExtractor"
-    NUM_CLASSES: 5 # TODO
+    PREDICTOR: "MaskRCNNFPNImageMaskPredictor"
+    NUM_CLASSES: 459 # TODO, w detailu jest 0-458, ale chyba nie przeszkadza jak ulatwimy indeksowanie +1)
   KEYPOINT_ON: True
   MASK_ON: True
   IMAGEMASK_ON: False
