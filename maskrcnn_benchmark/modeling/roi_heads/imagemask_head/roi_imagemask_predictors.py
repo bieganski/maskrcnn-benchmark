@@ -31,6 +31,6 @@ class MaskRCNNImageMakPredictor(nn.Module):
 
 def make_roi_imagemask_predictor(cfg):
     func = registry.ROI_IMAGEMASK_PREDICTOR[
-        cfg.MODEL.ROI_IMAGEMASK_PREDICTOR
+        cfg.MODEL.ROI_IMAGEMASK_HEAD.PREDICTOR
     ]
     return func(cfg)
