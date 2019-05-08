@@ -106,8 +106,19 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             assert(features[0].size()[0] == 1, "BATCH SIZE OF {} ERROR: "
                                                "Semantic Segmentation works on single batch, "
                                                "due to resizing FPN output".format(features[0].size()[0]))
-            y, loss_imagemask = self.imagemask(features, targets)
-            losses.update(loss_imagemask)
+            y, proposals_imagemask, loss_imagemask \
+                = self.imagemask(features, targets) # def forward(self, features, img_sizes, targets=None):
+            if self.training:
+                losses.update(loss_imagemask)
+            pass # TODO
+
+        ################### TODO
+
+        print(losses)
+        exit(1)
+
+        ###################
+
 
         # targets = box_targets
         # TODO rename x to roi_box_features, if it doesn't increase memory consumption
