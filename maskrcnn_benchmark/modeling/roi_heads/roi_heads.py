@@ -110,13 +110,11 @@ class CombinedROIHeads(torch.nn.ModuleDict):
                 = self.imagemask(features, targets) # def forward(self, features, img_sizes, targets=None):
             if self.training:
                 losses.update(loss_imagemask)
-            pass # TODO
+            print(losses)
+            return y, None, losses
 
         ################### TODO
-
-        print(losses)
-        return y, None, losses
-
+        return None, None, losses
         ###################
 
 
