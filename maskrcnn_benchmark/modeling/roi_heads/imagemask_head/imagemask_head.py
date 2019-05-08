@@ -1,18 +1,15 @@
 import torch
+import torch.nn.functional as F
 
-from .roi_imagemask_feature_extractor import make_roi_keypoint_feature_extractor
+from .roi_imagemask_predictors import make_roi_imagemask_predictor
+from .loss import make_roi_imagemask_loss_evaluator
 
 class ImageMaskHead(torch.nn.Module):
     def __init__(self, cfg, in_channels):
         super(ImageMaskHead, self).__init__()
         self.cfg = cfg.clone()
-        self.feature_extractor = make_roi_keypoint_feature_extractor(cfg,
-                                                                     in_channels,
-                                                                     cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES)
-        # self.predictor = make_roi_keypoint_predictor(
-        #     cfg, self.feature_extractor.out_channels)
-        # self.post_processor = make_roi_keypoint_post_processor(cfg)
-        # self.loss_evaluator = make_roi_keypoint_loss_evaluator(cfg)
+        self.predictor = make_roi_imagemask_predictor(cfg, in_channels, cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES)
+        self.loss_evaluator = make_roi_imagemask_loss_evaluator(cfg)
 
     def forward(self, features, proposals, targets=None):
         """
@@ -29,7 +26,8 @@ class ImageMaskHead(torch.nn.Module):
             losses (dict[Tensor]): During training, returns the losses for the
                 head. During testing, returns an empty dict.
         """
-        pass
+        assert(targets.size()[0] == 1) # only single batch supported
+
         # if self.training:
         #     with torch.no_grad():
         #         proposals = self.loss_evaluator.subsample(proposals, targets)
