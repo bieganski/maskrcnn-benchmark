@@ -51,5 +51,6 @@ class ImageMaskHead(torch.nn.Module):
         return x, proposal, {}
 
 def build_roi_imagemask_head(cfg, in_channels):
-    assert in_channels == cfg.MODEL.RESNETS.RES2_OUT_CHANNELS # 256
+    assert in_channels == cfg.MODEL.RESNETS.RES2_OUT_CHANNELS
+    assert in_channels == 256
     return ImageMaskHead(cfg)
