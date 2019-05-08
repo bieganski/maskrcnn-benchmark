@@ -31,5 +31,5 @@ class SegmentationMaskLoss(object):
 
 
 def make_roi_imagemask_loss_evaluator(cfg):
-    loss_evaluator = SegmentationMaskLoss(cfg.ROI_IMAGEMASK_HEAD.NUM_CLASSES)
+    loss_evaluator = SegmentationMaskLoss(cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES)
     return loss_evaluator
