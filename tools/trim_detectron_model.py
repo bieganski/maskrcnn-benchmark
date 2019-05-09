@@ -43,6 +43,6 @@ _d = load_c2_format(cfg, DETECTRON_PATH)
 newdict = _d
 # roi_heads.keypoint.predictor.kps_score_lowres.weight
 newdict['model'] = removekey(_d['model'],
-                             ['cls_score.bias', 'cls_score.weight', 'bbox_pred.bias', 'bbox_pred.weight', 'kps_score_lowres.weight', 'kps_score_lowres.bias'])
+                             ['cls_score.bias', 'cls_score.weight', 'bbox_pred.bias', 'bbox_pred.weight', 'kps_score_lowres.weight', 'kps_score_lowres.bias', 'conv1.bias', 'conv1.weight'])
 torch.save(newdict, args.save_path)
 print('saved to {}.'.format(args.save_path))
