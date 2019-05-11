@@ -117,13 +117,21 @@ class DatasetCatalog(object):
             "ann_file": "./pascal/trainval_withkeypoints.json",
             "split": "train",
         },
-        "coco_detail_keypoints": {
-            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
-            "ann_file": "pascal/kpt.json",
-        },
         "coco_detail": {
             "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
-            "ann_file": "pascal/inst.json",
+            "ann_file": "pascal/detail.json",
+        },
+        "coco_detail_train": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
+            "ann_file": "pascal/detail_train.json",
+        },
+        "coco_detail_test": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
+            "ann_file": "pascal/detail_test.json",
+        },
+        "coco_detail_val": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
+            "ann_file": "pascal/detail_val.json",
         },
 
     }

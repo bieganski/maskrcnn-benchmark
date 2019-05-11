@@ -12,7 +12,14 @@ TRAINVAL_PATH='./pascal/detail-api'
 DETAIL_ANNS = './trainval_withkeypoints.json'
 OUTPUT_DIR='./pascal'
 
-OUTPUT = 'kpt.json'
+OUTPUT = 'detail.json'
+OUTPUT_TRAIN = 'detail_train.json'
+OUTPUT_TEST = 'detail_test.json'
+OUTPUT_VAL = 'detail_val.json'
+
+TRAIN = 'train'
+TEST = 'test'
+VAL = 'val'
 
 def compressedRLEtoPolys(segmentation):
     mask_list = maskUtils.decode(segmentation)
@@ -132,20 +139,91 @@ class DetailToCoco:
        return a
 
     def to_dict(self, cats):
-        res = dict()
-        res['info'] = self.d['info']
-        res['annotations'] = self.mergeeeeeee()
+        train_data = dict()
+        test_data = dict()
+        val_data = dict()
+        
+        train_data['info'] = self.d['info']
+        test_data['info'] = self.d['info']
+        val_data['info'] = self.d['info']
+        
+        train_img, test_img, val_img = self.split()
+        train_data['images'] = train_img
+        test_data['images'] = test_img
+        val_data['images'] = val_img
+
+        train_id = set()
+        test_id = set()
+        val_id = set()
+
+        for img in train_img:
+            train_id.add(img['id'])
+        for img in test_img:
+            test_id.add(img['id'])
+        for img in val_img:
+            val_id.add(img['id'])
+
+        annotations = self.mergeeeeeee()
+        train_annos = []
+        test_annos = []
+        val_annos = []
+        for anno in annotations:
+            if anno['image_id'] in train_id:
+                train_annos.append(anno)
+            elif anno['image_id'] in test_id:
+                test_annos.append(anno)
+            elif anno['image_id'] in val_id:
+                val_annos.append(anno)
+            else:
+                print("Image not found:", anno['image_id'])
+                print(anno)
+                assert False
+            
         img_set = set()
-        for ann in res['annotations']:
-          img_set.add(ann['image_id'])
-        res['images'] = [x for x in self.d['images'] if x['id'] in img_set]
-        res['categories'] = cats
-        return res
+        counter = 0
+        for anno in annotations:
+          img_set.add(anno['image_id'])
+        for x in self.d['images']:
+            if not (x['id'] in img_set):
+                counter += 1
+                print(x)
+        print(counter)
+        
+        train_data['annotations'] = train_annos
+        test_data['annotations'] = test_annos
+        val_data['annotations'] = val_annos
+
+        train_data['categories'] = cats
+        test_data['categories'] = cats
+        val_data['categories'] = cats
+        return train_data, test_data, val_data
+
+    def split(self):
+        train = []
+        test = []
+        val = []
+        for img in self.d['images']:
+            if img['phase'] == TRAIN:
+                train.append(img)
+            elif img['phase'] == TEST:
+                test.append(img)
+            elif img['phase'] == VAL:
+                val.append(img)
+            else:
+                print("Unknown phase", img['id'], img['phase'])
+                assert False
+
+        return train, test, val
+
 
     def dump(self):
-        output = self.to_dict(self.INST_CATS)
-        with open(join(OUTPUT_DIR, OUTPUT), 'w') as outfile:
-            json.dump(output, outfile)
+        train, test, val = self.to_dict(self.INST_CATS)
+        with open(join(OUTPUT_DIR, OUTPUT_TRAIN), 'w') as outfile:
+            json.dump(train, outfile)
+        with open(join(OUTPUT_DIR, OUTPUT_TEST), 'w') as outfile:
+            json.dump(test, outfile)
+        with open(join(OUTPUT_DIR, OUTPUT_VAL), 'w') as outfile:
+            json.dump(val, outfile)
 
 
 if __name__ == '__main__':

@@ -41,11 +41,8 @@ MODEL:
   KEYPOINT_ON: True
   MASK_ON: True
 DATASETS:
-  TRAIN: ("coco_detail_keypoints",)
-#   TRAIN: ("keypoints_coco_2014_train",)
-#  TRAIN: ("coco_2017_val", "keypoints_coco_2017_val",)
-#  TRAIN: ("keypoints_coco_2017_val",)
-#  TEST:
+  TRAIN: ("coco_detail_train",)
+  TEST: ("coco_detail_test",)
 INPUT:
   MAX_SIZE_TEST: 300
   MIN_SIZE_TEST: 100
