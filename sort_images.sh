@@ -11,7 +11,7 @@ if [ -f "pascal/train_list" ] ; then
         rm -rf ${TRAIN_PATH}
     fi
     mkdir ${TRAIN_PATH}
-    while read $f ; do
+    while read f ; do
         cp ${IMAGES_PATH}/${f} ${TRAIN_PATH}/${f}
     done < pascal/train_list
 else 
@@ -35,8 +35,8 @@ if [ -f "pascal/val_list" ] ; then
         rm -rf ${val_PATH}
     fi
     mkdir ${val_PATH}
-    while read $f ; do
-        cp ${IMAGES_PATH}/${f} ${val_PATH}/${f}
+    while read f ; do
+        cp ${IMAGES_PATH}/${f} ${VAL_PATH}/${f}
     done < pascal/val_list
 else 
     echo "No file for val split"
