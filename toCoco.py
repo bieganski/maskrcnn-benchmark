@@ -138,20 +138,31 @@ class DetailToCoco:
        a.extend(self.convert_instances())
        return a
 
+    def save_img_names(self, img_list, file_name):
+        with open(join(OUTPUT_DIR, file_name), 'w') as f:
+            for img in img_list:
+                f.write(img + '.jpg\n')
+        
+
     def to_dict(self, cats):
         train_data = dict()
         test_data = dict()
         val_data = dict()
         
+        # Setting info
         train_data['info'] = self.d['info']
         test_data['info'] = self.d['info']
         val_data['info'] = self.d['info']
         
+        # Merging annotations
         annotations = self.mergeeeeeee()
+
+        # Preparing images to split
+        # I remove images without annotations
         annos_img_set = set()
         with_annos = 0
         wo_annos = 0
-        img_list = []
+        img_list = []  # Contains list of images with annotations
         for anno in annotations:
             annos_img_set.add(anno['image_id'])
         for x in self.d['images']:
@@ -163,15 +174,16 @@ class DetailToCoco:
                 img_list.append(x)
         print('With annos:', with_annos, '\nwithout annos:', wo_annos)
 
+        # Spliting images accordingly to 'phase'
         train_img, test_img, val_img = self.split(img_list)
         train_data['images'] = train_img
         test_data['images'] = test_img
         val_data['images'] = val_img
 
+        # Preparing list of ids of all the images in each split
         train_id = set()
         test_id = set()
         val_id = set()
-
         for img in train_img:
             train_id.add(img['id'])
         for img in test_img:
@@ -179,6 +191,7 @@ class DetailToCoco:
         for img in val_img:
             val_id.add(img['id'])
 
+        # Preparing list of annotations for each split
         train_annos = []
         test_annos = []
         val_annos = []
@@ -193,17 +206,35 @@ class DetailToCoco:
                 print("Image not found:", anno['image_id'])
                 print(anno)
                 assert False
+
+        # Making sure there is enough annotations for all the images
+        assert len(train_annos) >= len(train_img)
+        assert len(test_annos) >= len(test_img)
+        assert len(val_annos) >= len(val_img)
         
+        # Saving list of files in order to split images between folders
+        self.save_img_names(train_img, 'train_list')
+        self.save_img_names(test_img, 'test_list')
+        self.save_img_names(val_img, 'val_list')
+
+        # Setting annotations
         train_data['annotations'] = train_annos
         test_data['annotations'] = test_annos
         val_data['annotations'] = val_annos
 
+        # Setting categories
         train_data['categories'] = cats
         test_data['categories'] = cats
         val_data['categories'] = cats
+
         return train_data, test_data, val_data
 
     def split(self, img_list):
+        """Splits img_list accordingly to phase.
+
+        Arguments:
+        img_list -- list of images (in JSON)
+        """
         train = []
         test = []
         val = []
@@ -217,7 +248,9 @@ class DetailToCoco:
             else:
                 print("Unknown phase", img['id'], img['phase'])
                 assert False
-
+        print('Train:', len(train))
+        print('Test', len(test))
+        print('Val', len(val))
         return train, test, val
 
 
