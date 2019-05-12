@@ -151,7 +151,7 @@ class DetailToCoco:
         annos_img_set = set()
         with_annos = 0
         wo_annos = 0
-        img_set = set()
+        img_list = []
         for anno in annotations:
             annos_img_set.add(anno['image_id'])
         for x in self.d['images']:
@@ -160,10 +160,10 @@ class DetailToCoco:
                 print(x)
             else:
                 with_annos += 1
-                img_set.add(x)
+                img_list.append(x)
         print('With annos:', with_annos, '\nwithout annos:', wo_annos)
 
-        train_img, test_img, val_img = self.split(img_set)
+        train_img, test_img, val_img = self.split(img_list)
         train_data['images'] = train_img
         test_data['images'] = test_img
         val_data['images'] = val_img
@@ -203,11 +203,11 @@ class DetailToCoco:
         val_data['categories'] = cats
         return train_data, test_data, val_data
 
-    def split(self, img_set):
+    def split(self, img_list):
         train = []
         test = []
         val = []
-        for img in img_set:
+        for img in img_list:
             if img['phase'] == TRAIN:
                 train.append(img)
             elif img['phase'] == TEST:
