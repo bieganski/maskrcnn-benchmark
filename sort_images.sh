@@ -15,6 +15,7 @@ if [ -f "pascal/train_list" ] ; then
     done < pascal/train_list
 else 
     echo "No file for train split"
+fi
 
 # if [ -f "pascal/test_list" ] ; then
 #     if [ -d "${test_PATH}" ] ; then
@@ -25,6 +26,7 @@ else
 #     done < pascal/test_list
 # else 
 #     echo "No file for test split"
+# fi
 
 if [ -f "pascal/val_list" ] ; then
     if [ -d "${val_PATH}" ] ; then
@@ -35,3 +37,4 @@ if [ -f "pascal/val_list" ] ; then
     done < pascal/val_list
 else 
     echo "No file for val split"
+fi
