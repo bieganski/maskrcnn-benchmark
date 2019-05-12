@@ -141,7 +141,7 @@ class DetailToCoco:
     def save_img_names(self, img_list, file_name):
         with open(join(OUTPUT_DIR, file_name), 'w') as f:
             for img in img_list:
-                f.write(img + '.jpg\n')
+                f.write(str(img) + '\n')
         
 
     def to_dict(self, cats):
@@ -213,9 +213,9 @@ class DetailToCoco:
         assert len(val_annos) >= len(val_img)
         
         # Saving list of files in order to split images between folders
-        self.save_img_names(train_img, 'train_list')
-        self.save_img_names(test_img, 'test_list')
-        self.save_img_names(val_img, 'val_list')
+        self.save_img_names([x['file_name'] for x in train_img], 'train_list')
+        self.save_img_names([x['file_name'] for x in test_img], 'test_list')
+        self.save_img_names([x['file_name'] for x in val_img], 'val_list')
 
         # Setting annotations
         train_data['annotations'] = train_annos
