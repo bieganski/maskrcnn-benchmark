@@ -19,22 +19,22 @@ else
 fi
 
 # if [ -f "pascal/test_list" ] ; then
-#     if [ -d "${test_PATH}" ] ; then
-#         rm -rf ${test_PATH}
+#     if [ -d "${TEST_PATH}" ] ; then
+#         rm -rf ${TEST_PATH}
 #     fi
-#     mkdir ${test_PATH}
+#     mkdir ${TEST_PATH}
 #     while read $f ; do
-#         cp ${IMAGES_PATH}/${f} ${test_PATH}/${f}
+#         cp ${IMAGES_PATH}/${f} ${TEST_PATH}/${f}
 #     done < pascal/test_list
 # else 
 #     echo "No file for test split"
 # fi
 
 if [ -f "pascal/val_list" ] ; then
-    if [ -d "${val_PATH}" ] ; then
-        rm -rf ${val_PATH}
+    if [ -d "${VAL_PATH}" ] ; then
+        rm -rf ${VAL_PATH}
     fi
-    mkdir ${val_PATH}
+    mkdir ${VAL_PATH}
     while read f ; do
         cp ${IMAGES_PATH}/${f} ${VAL_PATH}/${f}
     done < pascal/val_list
