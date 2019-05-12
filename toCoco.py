@@ -111,7 +111,7 @@ class DetailToCoco:
             kpt_obj['id'] = id
             kpt_obj['iscrowd'] = 0
             id += 1
-        print(len(kpts))
+        print('Keypoints:', len(kpts))
         return kpts
 
     def convert_instances(self):
@@ -130,7 +130,7 @@ class DetailToCoco:
             el['iscrowd'] = 0
             el["keypoints"] = 42*[0]
             el['num_keypoints'] = 0
-        print(len(segm))
+        print('Segmentation:', len(segm))
         return segm
 
     def mergeeeeeee(self):
@@ -147,7 +147,23 @@ class DetailToCoco:
         test_data['info'] = self.d['info']
         val_data['info'] = self.d['info']
         
-        train_img, test_img, val_img = self.split()
+        annotations = self.mergeeeeeee()
+        annos_img_set = set()
+        with_annos = 0
+        wo_annos = 0
+        img_set = set()
+        for anno in annotations:
+            annos_img_set.add(anno['image_id'])
+        for x in self.d['images']:
+            if not (x['id'] in annos_img_set):
+                wo_annos += 1
+                print(x)
+            else:
+                with_annos += 1
+                img_set.add(x)
+        print('With annos:', with_annos, '\nwithout annos:', wo_annos)
+
+        train_img, test_img, val_img = self.split(img_set)
         train_data['images'] = train_img
         test_data['images'] = test_img
         val_data['images'] = val_img
@@ -163,7 +179,6 @@ class DetailToCoco:
         for img in val_img:
             val_id.add(img['id'])
 
-        annotations = self.mergeeeeeee()
         train_annos = []
         test_annos = []
         val_annos = []
@@ -178,16 +193,6 @@ class DetailToCoco:
                 print("Image not found:", anno['image_id'])
                 print(anno)
                 assert False
-            
-        img_set = set()
-        counter = 0
-        for anno in annotations:
-          img_set.add(anno['image_id'])
-        for x in self.d['images']:
-            if not (x['id'] in img_set):
-                counter += 1
-                print(x)
-        print(counter)
         
         train_data['annotations'] = train_annos
         test_data['annotations'] = test_annos
@@ -198,11 +203,11 @@ class DetailToCoco:
         val_data['categories'] = cats
         return train_data, test_data, val_data
 
-    def split(self):
+    def split(self, img_set):
         train = []
         test = []
         val = []
-        for img in self.d['images']:
+        for img in img_set:
             if img['phase'] == TRAIN:
                 train.append(img)
             elif img['phase'] == TEST:
@@ -218,6 +223,7 @@ class DetailToCoco:
 
     def dump(self):
         train, test, val = self.to_dict(self.INST_CATS)
+        print('Saving..')
         with open(join(OUTPUT_DIR, OUTPUT_TRAIN), 'w') as outfile:
             json.dump(train, outfile)
         with open(join(OUTPUT_DIR, OUTPUT_TEST), 'w') as outfile:
