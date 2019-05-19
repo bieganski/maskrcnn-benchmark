@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import json
+import argparse
 import cv2
 import numpy as np
 from pycocotools import mask
@@ -144,7 +145,7 @@ class DetailToCoco:
                 f.write(str(img) + '\n')
         
 
-    def to_dict(self, cats):
+    def split_dict(self, cats):
         train_data = dict()
         test_data = dict()
         val_data = dict()
@@ -156,7 +157,7 @@ class DetailToCoco:
         
         # Merging annotations
         annotations = self.mergeeeeeee()
-
+        print('All the annotations:', len(annotations))
         # Preparing images to split
         # I remove images without annotations
         annos_img_set = set()
@@ -212,6 +213,10 @@ class DetailToCoco:
         assert len(test_annos) >= len(test_img)
         assert len(val_annos) >= len(val_img)
         
+        print('Train annos:', len(train_annos))
+        print('Test annos:', len(test_annos))
+        print('Val annos:', len(val_annos))
+
         # Saving list of files in order to split images between folders
         self.save_img_names([x['file_name'] for x in train_img], 'train_list')
         self.save_img_names([x['file_name'] for x in test_img], 'test_list')
@@ -254,17 +259,49 @@ class DetailToCoco:
         return train, test, val
 
 
-    def dump(self):
-        train, test, val = self.to_dict(self.INST_CATS)
+    def split_dump(self):
+        train, test, val = self.split_dict(self.INST_CATS)
         print('Saving..')
         with open(join(OUTPUT_DIR, OUTPUT_TRAIN), 'w') as outfile:
-            json.dump(train, outfile)
+            json.dump(train, outfile, sort_keys=True, indent=2)
         with open(join(OUTPUT_DIR, OUTPUT_TEST), 'w') as outfile:
-            json.dump(test, outfile)
+            json.dump(test, outfile, sort_keys=True, indent=2)
         with open(join(OUTPUT_DIR, OUTPUT_VAL), 'w') as outfile:
-            json.dump(val, outfile)
+            json.dump(val, outfile, sort_keys=True, indent=2)
+
+    def to_dict(self, cats):
+        res = dict()
+        res['info'] = self.d['info']
+        annotations = self.mergeeeeeee()
+        print('Annotations:', len(annotations))
+        res['annotations'] = annotations 
+        img_set = set()
+        for ann in res['annotations']:
+          img_set.add(ann['image_id'])
+        res['images'] = [x for x in self.d['images'] if x['id'] in img_set]
+        res['categories'] = cats
+        return res
+
+    def dump(self):
+        output = self.to_dict(self.INST_CATS)
+        with open(join(OUTPUT_DIR, OUTPUT), 'w') as outfile:
+            json.dump(output, outfile, sort_keys=True, indent=2)
+
+
+def main():
+    parser = argparse.ArgumentParser('Translate Detail annotations to Coco.')
+    parser.add_argument('--whole', '-w', dest='whole', action='store_true', default=False)
+    args = parser.parse_args()
+
+    dc = DetailToCoco()
+
+    if args.whole:
+        print('Dumping whole dataset..')
+        dc.dump()
+    else:
+        print('Dumping splitted dataset..')
+        dc.split_dump()
 
 
 if __name__ == '__main__':
-    dc = DetailToCoco()
-    dc.dump()
+    main()
