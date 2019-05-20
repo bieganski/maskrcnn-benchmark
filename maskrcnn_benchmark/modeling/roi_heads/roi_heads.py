@@ -103,9 +103,9 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
-            assert(features[0].size()[0] == 1, "BATCH SIZE OF {} ERROR: "
-                                               "Semantic Segmentation works on single batch, "
-                                               "due to resizing FPN output".format(features[0].size()[0]))
+            err = ("BATCH SIZE OF {} ERROR: Semantic Segmentation works on single batch, "
+                   + "due to resizing FPN output").format(features[0].size()[0])
+            assert features[0].size()[0] == 1, err
             y, proposals_imagemask, loss_imagemask \
                 = self.imagemask(features, targets) # def forward(self, features, img_sizes, targets=None):
             if self.training:
