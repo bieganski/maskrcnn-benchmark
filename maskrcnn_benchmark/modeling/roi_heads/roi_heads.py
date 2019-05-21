@@ -104,7 +104,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
     def forward(self, features, proposals, targets=None):
         losses = {}
-
+        test = not bool(targets)
         # box_targets = targets
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
@@ -125,34 +125,39 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             ):
                 mask_features = x
 
-            ids = []
-            for index, boxlist in enumerate(targets):
-                sgms = boxlist.get_field('masks')
-                valid_one = False
-                for poly in sgms.polygons:
-                    valid = True
-                    for inner_poly in poly.polygons:
-                        if len(inner_poly) <= 4:
-                            valid = False
-                    if valid and len(poly.polygons) > 0:
-                        valid_one = True
-                if valid_one:
-                    ids.append(index)
+            if not test:
+                ids = []
+                for index, boxlist in enumerate(targets):
+                    sgms = boxlist.get_field('masks')
+                    valid_one = False
+                    for poly in sgms.polygons:
+                        valid = True
+                        for inner_poly in poly.polygons:
+                            if len(inner_poly) <= 4:
+                                valid = False
+                        if valid and len(poly.polygons) > 0:
+                            valid_one = True
+                    if valid_one:
+                        ids.append(index)
 
-            filtered_mask_features = [mask_features[index] for index in ids]
-            filtered_mask_detections = [detections[index] for index in ids]
-            filtered_mask_targets = [targets[index] for index in ids]
+                filtered_mask_features = [mask_features[index] for index in ids]
+                filtered_mask_detections = [detections[index] for index in ids]
+                filtered_mask_targets = [targets[index] for index in ids]
 
-            # box_targets = 
-            # keypoint_targets = targets
-            filtered_mask_targets = [self._filterSegmentation(target) for target in filtered_mask_targets]
+                # box_targets = 
+                # keypoint_targets = targets
+                filtered_mask_targets = [self._filterSegmentation(target) for target in filtered_mask_targets]
 
-            if len(ids) > 0:
-                # targets = filtered_mask_targets
-                # During training, self.box() will return the unaltered proposals as "detections"
-                # this makes the API consistent during training and testing
-                x, detections, loss_mask = self.mask(filtered_mask_features, filtered_mask_detections, filtered_mask_targets)
+                if len(ids) > 0:
+                    # targets = filtered_mask_targets
+                    # During training, self.box() will return the unaltered proposals as "detections"
+                    # this makes the API consistent during training and testing
+                    x, detections, loss_mask = self.mask(filtered_mask_features, filtered_mask_detections, filtered_mask_targets)
+                    losses.update(loss_mask)
+            else:
+                x, detections, loss_mask = self.mask(mask_features, detections, targets)
                 losses.update(loss_mask)
+
 
         if self.cfg.MODEL.KEYPOINT_ON:
             keypoint_features = features
@@ -164,43 +169,48 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             ):
                 keypoint_features = x
 
-            # targets = keypoint_targets
-            # maybe do that in preprocessing and add a flag to determine id choices
-            # probably not the most efficient way to do that
-            ids = []
-            for index, boxlist in enumerate(targets):
-                kpts = boxlist.get_field('keypoints')
-                counter = 0
-                for matrix in kpts.keypoints:
-                    # print(matrix)
-                    # print(matrix[:,2])
-                    # print(sum(matrix[:,2]))
-                    counter += sum(matrix[:,2])
-                if counter >= 5: # 5 not 10, because hardly any pictures have that many keypoints
-                    ids.append(index)
+            if not test:
+                # targets = keypoint_targets
+                # maybe do that in preprocessing and add a flag to determine id choices
+                # probably not the most efficient way to do that
+                ids = []
+                for index, boxlist in enumerate(targets):
+                    kpts = boxlist.get_field('keypoints')
+                    counter = 0
+                    for matrix in kpts.keypoints:
+                        # print(matrix)
+                        # print(matrix[:,2])
+                        # print(sum(matrix[:,2]))
+                        counter += sum(matrix[:,2])
+                    if counter >= 5: # 5 not 10, because hardly any pictures have that many keypoints
+                        ids.append(index)
 
-            # those may better be something more sophiticated than lists
-            filtered_keypoint_features = [keypoint_features[index] for index in ids]
-            filtered_keypoint_detections = [detections[index] for index in ids]
-            filtered_keypoint_targets = [targets[index] for index in ids]
+                # those may better be something more sophiticated than lists
+                filtered_keypoint_features = [keypoint_features[index] for index in ids]
+                filtered_keypoint_detections = [detections[index] for index in ids]
+                filtered_keypoint_targets = [targets[index] for index in ids]
 
-            filtered_keypoint_targets = [self._filterKeypoints(target) for target in filtered_keypoint_targets]
+                filtered_keypoint_targets = [self._filterKeypoints(target) for target in filtered_keypoint_targets]
 
-            # print(ids)
-            # print(len(filtered_keypoint_features))
-            # print(len(filtered_detections))
-            # print(len(filtered_targets))
+                # print(ids)
+                # print(len(filtered_keypoint_features))
+                # print(len(filtered_detections))
+                # print(len(filtered_targets))
 
-            # During training, self.box() will return the unaltered proposals as "detections"
-            # this makes the API consistent during training and testing
-            all_detections = detections # get detections for all pictures to preserve behavior specified in aforementioned comment
+                # During training, self.box() will return the unaltered proposals as "detections"
+                # this makes the API consistent during training and testing
+                all_detections = detections # get detections for all pictures to preserve behavior specified in aforementioned comment
 
-            if len(ids) > 0:
-                # x, detections, loss_keypoint = self.keypoint(keypoint_features, detections, targets)
-                x, detections, loss_keypoint = self.keypoint(filtered_keypoint_features, filtered_keypoint_detections, filtered_keypoint_targets)
+                if len(ids) > 0:
+                    # x, detections, loss_keypoint = self.keypoint(keypoint_features, detections, targets)
+                    x, detections, loss_keypoint = self.keypoint(filtered_keypoint_features, filtered_keypoint_detections, filtered_keypoint_targets)
+                    losses.update(loss_keypoint)
+
+                detections = all_detections # restore detections, maybe there is a problem outside of training with that
+            else:
+                x, detections, loss_keypoint = self.keypoint(keypoint_features, detections, targets)
                 losses.update(loss_keypoint)
 
-            detections = all_detections # restore detections, maybe there is a problem outside of training with that
         return x, detections, losses
 
 

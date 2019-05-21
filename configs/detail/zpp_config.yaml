@@ -1,6 +1,6 @@
 MODEL:
   META_ARCHITECTURE: "GeneralizedRCNN"
-  WEIGHT: "./configs/detail/new_keypoint_weights.pth"
+  WEIGHT: "/home/zppmt/maskrcnn-benchmark/configs/detail/new_keypoint_weights.pth"
   BACKBONE:
     CONV_BODY: "R-50-FPN"
   RESNETS:
@@ -58,4 +58,4 @@ SOLVER:
   MAX_ITER: 11250
   IMS_PER_BATCH: 2
 TEST:
-  IMS_PER_BATCH: 2
+  IMS_PER_BATCH: 1
