@@ -109,6 +109,7 @@ class DetailToCoco:
         id = 1
         for kpt_obj in kpts:
             kpt_obj['segmentation'] = [[]]
+            kpt_obj['area'] = 0
             kpt_obj['id'] = id
             kpt_obj['iscrowd'] = 0
             id += 1
