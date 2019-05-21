@@ -38,6 +38,12 @@ def has_valid_annotation(anno):
     #     return True
     # return False
 
+def mask_pixel(value, pair):
+    if pair[1] == 0:
+        return pair[0]
+    else:
+        return value
+
 
 class COCODataset(torchvision.datasets.coco.CocoDetection):
     def __init__(
@@ -86,9 +92,14 @@ class COCODataset(torchvision.datasets.coco.CocoDetection):
         masks = SegmentationMask(masks, img.size)
         target.add_field("masks", masks)
 
-        # TODO assert (isinstance(imgmask, torch.Tensor))
-        # TODO assert (list(imgmask.size()) == list(img.size))
-        # TODO  target.add_field("imgmask", imgmask) (maska dla semantic segmentation)
+        semantic_masks = anno[0]["semantic_segmentation"] # should be zeros of that shape
+        for obj in anno:
+            semantic_masks = [[mask_pixel(obj["category_id"], pair) for pair in zip(*pairs)] for pairs in zip(semantic_masks, obj["semantic_segmentation"])]
+
+        semantic_masks = torch.tensor(semantic_masks)
+        target.add_field("imgmask", semantic_masks)
+        assert (isinstance(semantic_masks, torch.Tensor))
+        assert (list(semantic_masks.size()) == list(img.size))
 
         if anno:
             keypoints = [obj["keypoints"] for obj in anno if "keypoints" in obj]
