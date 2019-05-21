@@ -31,7 +31,15 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             if valid and len(poly.polygons) > 0:
                 ids.append(index)
         if len(ids) == 0:
+            print(boxlist.get_field('masks'))
+            for poly in sgms.polygons:
+                print("a")
+                len(poly.polygons)
+                for inner_poly in poly.polygons:
+                    print(inner_poly)
+                    print(len(inner_poly))
             print("!!!!!")
+
         boxes = [(boxlist.bbox[index]).tolist() for index in ids]
         boxes = torch.as_tensor(boxes).reshape(-1, 4)  # guard against no boxes
         # print(type(boxes))
@@ -120,12 +128,15 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             ids = []
             for index, boxlist in enumerate(targets):
                 sgms = boxlist.get_field('masks')
-                valid = False
+                valid_one = False
                 for poly in sgms.polygons:
+                    valid = True
                     for inner_poly in poly.polygons:
-                        if len(inner_poly) > 4:
-                            valid = True        
-                if valid:
+                        if len(inner_poly) <= 4:
+                            valid = False
+                    if valid and len(poly.polygons) > 0:
+                        valid_one = True
+                if valid_one:
                     ids.append(index)
 
             filtered_mask_features = [mask_features[index] for index in ids]
