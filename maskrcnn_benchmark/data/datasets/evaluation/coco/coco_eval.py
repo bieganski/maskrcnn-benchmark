@@ -318,7 +318,12 @@ def evaluate_predictions_on_coco(
     # coco_dt = coco_gt.loadRes(coco_results)
     print(iou_type)
     print(json_result_file)
-    coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
+    if iou_type == 'keypoints':
+        from detail.detaileval_kpt import DetailEvalKpt
+        coco_eval = DetailEvalKpt(coco_gt)
+        coco_eval.loadRes(coco_dt)
+    else:
+        coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
