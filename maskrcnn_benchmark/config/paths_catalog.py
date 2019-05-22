@@ -133,6 +133,10 @@ class DatasetCatalog(object):
             "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/val",
             "ann_file": "pascal/detail_val.json",
         },
+        "coco_detail_minival": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/val",
+            "ann_file": "pascal/coco_detail_minival.json",
+        },
 
     }
 
