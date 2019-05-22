@@ -319,8 +319,10 @@ def evaluate_predictions_on_coco(
     print(iou_type)
     print(json_result_file)
     if iou_type == 'keypoints':
+        from detail import Detail
         from detail.detaileval_kpt import DetailEvalKpt
-        coco_eval = DetailEvalKpt(coco_gt)
+        detailsGt = Detail('./pascal/trainval_withkeypoints.json', "./pascal/VOCdevkit/VOC2010/JPEGImages", "val")
+        coco_eval = DetailEvalKpt(detailsGt)
         coco_eval.loadRes(coco_dt)
     else:
         coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
