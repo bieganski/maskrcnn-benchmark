@@ -316,6 +316,8 @@ def evaluate_predictions_on_coco(
     coco_dt = coco_gt.loadRes(str(json_result_file)) if coco_results else COCO()
 
     # coco_dt = coco_gt.loadRes(coco_results)
+    print(type(coco_gt))
+    print(coco_dt)
     coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
     coco_eval.evaluate()
     coco_eval.accumulate()
