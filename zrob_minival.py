@@ -16,7 +16,7 @@ for img in a['images']:
 a['images'] = nowe_zdjecia
 
 
-with open('./pascal/minival.json', 'w') as outfile:
+with open('./pascal/coco_detail_minival.json', 'w') as outfile:
 	json.dump(a, outfile, sort_keys=True, indent=2)
 
 
