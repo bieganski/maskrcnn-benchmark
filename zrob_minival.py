@@ -2,9 +2,9 @@
 
 import json
 
-a = json.load(open('detail_val.json', 'rb'))
+a = json.load(open('./pascal/detail_val.json', 'rb'))
 
-ZOSTAW_JEDEN_NA = 10
+ZOSTAW_JEDEN_NA = 25
 
 i = 0
 nowe_zdjecia = []
