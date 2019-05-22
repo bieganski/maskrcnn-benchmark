@@ -1,6 +1,6 @@
 MODEL:
   META_ARCHITECTURE: "GeneralizedRCNN"
-  WEIGHT: "/home/zppmt/maskrcnn-benchmark/configs/detail/new_keypoint_weights.pth"
+  WEIGHT: "./configs/detail/new_keypoint_weights.pth"
   BACKBONE:
     CONV_BODY: "R-50-FPN"
   RESNETS:
