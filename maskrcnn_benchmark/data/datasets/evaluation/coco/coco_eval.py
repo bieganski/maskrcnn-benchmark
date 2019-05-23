@@ -326,7 +326,13 @@ def evaluate_predictions_on_coco(
         coco_eval = DetailEvalKpt(detailsGt)
         coco_eval.loadRes(coco_results)
     else:
-        coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
+        from detail import Detail
+        from detail.detaileval_cls import DetailEvalCls
+        detailsGt = Detail('./pascal/detail-api/trainval_withkeypoints.json',
+                           "./pascal/detail-api/VOCdevkit/VOC2010/JPEGImages", "val")
+        # coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
+        coco_eval = DetailEvalCls(detailsGt)
+        coco_eval.loadRes(coco_results)
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
