@@ -42,8 +42,8 @@ MODEL:
   MASK_ON: True
 DATASETS:
   TRAIN: ("coco_detail_train",)
-  TEST: ("coco_detail_val",)
-#  TEST: ("coco_detail_minival",)
+#  TEST: ("coco_detail_val",)
+  TEST: ("coco_detail_minival",)
 INPUT:
   MIN_SIZE_TRAIN: (640, 672, 704, 736, 768, 800)
 #  MAX_SIZE_TEST: 300
