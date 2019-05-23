@@ -13,7 +13,7 @@ from maskrcnn_benchmark.utils import cv2_util
 
 class COCODemo(object):
     # COCO categories for pretty print
-    CATEGORIES = [
+    _CATEGORIES = [
         "__background",
         "person",
         "bicycle",
@@ -96,6 +96,68 @@ class COCODemo(object):
         "hair drier",
         "toothbrush",
     ]
+
+    CATEGORIES = ['__background',
+                  'aeroplane',
+                  'bicycle',
+                  'bird',
+                  'boat',
+                  'bottle',
+                  'bus',
+                  'car',
+                  'cat',
+                  'chair',
+                  'cow',
+                  'diningtable',
+                  'dog',
+                  'horse',
+                  'motorbike',
+                  'person',
+                  'pottedplant',
+                  'sheep',
+                  'sofa',
+                  'train',
+                  'tvmonitor',
+                  'bag',
+                  'bed',
+                  'bench',
+                  'book',
+                  'building',
+                  'cabinet',
+                  'ceiling',
+                  'cloth',
+                  'computer',
+                  'cup',
+                  'door',
+                  'fence',
+                  'floor',
+                  'flower',
+                  'food',
+                  'grass',
+                  'ground',
+                  'keyboard',
+                  'light',
+                  'mountain',
+                  'mouse',
+                  'curtain',
+                  'platform',
+                  'sign',
+                  'plate',
+                  'road',
+                  'rock',
+                  'shelves',
+                  'sidewalk',
+                  'sky',
+                  'snow',
+                  'bedclothes',
+                  'track',
+                  'tree',
+                  'truck',
+                  'wall',
+                  'water',
+                  'window',
+                  'wood']
+
 
     def __init__(
         self,
@@ -401,7 +463,7 @@ def vis_keypoints(img, kps, kp_thresh=2, alpha=0.7):
     sc_mid_hip = np.minimum(
         kps[2, dataset_keypoints.index('right_hip')],
         kps[2, dataset_keypoints.index('left_hip')])
-    nose_idx = dataset_keypoints.index('nose')
+    nose_idx = dataset_keypoints.index('head')
     if sc_mid_shoulder > kp_thresh and kps[2, nose_idx] > kp_thresh:
         cv2.line(
             kp_mask, tuple(mid_shoulder), tuple(kps[:2, nose_idx]),
