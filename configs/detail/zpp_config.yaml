@@ -41,9 +41,9 @@ MODEL:
   ROI_IMAGEMASK_HEAD:
     PREDICTOR: "MaskRCNNFPNImageMaskPredictor"
     NUM_CLASSES: 60 # TODO
-  KEYPOINT_ON: True
-  MASK_ON: True
-  IMAGEMASK_ON: False
+  KEYPOINT_ON: False
+  MASK_ON: False
+  IMAGEMASK_ON: True
 DATASETS:
 #  TRAIN: ("coco_detail_keypoints",)
    TRAIN: ("coco_detail_train",)
