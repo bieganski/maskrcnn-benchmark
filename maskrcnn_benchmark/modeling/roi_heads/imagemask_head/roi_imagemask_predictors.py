@@ -34,6 +34,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
         print("---------------------------------------------------------------------------")
         x = self.conv1(x)
         assert list(x.size()) == [1, self.num_cls, img_size[0], img_size[1]]
+        assert False, x.size()
         return x
 
 
