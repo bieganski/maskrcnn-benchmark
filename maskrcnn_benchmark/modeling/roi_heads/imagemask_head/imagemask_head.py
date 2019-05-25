@@ -15,7 +15,7 @@ class ImageMaskHead(torch.nn.Module):
         # x - (N, 128, 128, K), where K is num classes + 1 (for detail - 60)
         # return - proposal (N, 128, 128, 1), where proposal[i, j] = k iff pixel`s (i, j) class is k
         assert x.size()[-1] == self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES, x.size()[-1]
-        proposal = torch.max(x, dim=-1)[1]
+        proposal = torch.max(x, dim=1)[1]
         assert list(proposal.size()) == [1, x.size()[0], x.size()[1], 1]
 
     def forward(self, features, img_sizes, targets=None):
