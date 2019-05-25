@@ -110,7 +110,7 @@ class COCODataset(torchvision.datasets.coco.CocoDetection):
         target.add_field("semantic_masks", semantic_masks)
 
         # assert (isinstance(semantic_masks, torch.Tensor))
-        assert (list(semantic_masks.size()) == list(img.size))
+        assert (list(semantic_masks.size()) == list(img.size)), str(((list(semantic_masks.size()), list(img.size))))
 
         if anno:
             keypoints = [obj["keypoints"] for obj in anno if "keypoints" in obj]
