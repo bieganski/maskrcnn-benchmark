@@ -10,6 +10,7 @@ class SegmentationMaskLoss(object):
         self.loss = F.binary_cross_entropy
 
     def __call__(self, x, gt):
+        assert False, (x.size(), gt.size())
         assert x.size()[0] == 1
         x = x.squeeze(0)
         assert x.size()[0] == self.num_cls
