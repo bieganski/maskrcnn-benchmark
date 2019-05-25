@@ -25,6 +25,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
         # x[0] - output z FPNa największej rozdzielczości;
         # powiększamy go do wymiarów obrazka i redukujemy głębokość
         x = x[0]
+        img_size = img_size[0]
         assert (( x.size()[-2] <= x.size()[-1] ) == ( img_size[0] <= img_size[1] )), (x.size(), img_size)
         # TODO chyba img_size -> targets, wówczas w inference bez interpolacji
         x = self.interp(x, size=img_size, mode='nearest')
