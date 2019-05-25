@@ -125,7 +125,22 @@ class DatasetCatalog(object):
             "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/JPEGImages",
             "ann_file": "pascal/inst.json",
         },
-
+        "coco_detail_train": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/train",
+            "ann_file": "pascal/detail_train.json",
+        },
+        "coco_detail_test": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/test",
+            "ann_file": "pascal/detail_test.json",
+        },
+        "coco_detail_val": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/val",
+            "ann_file": "pascal/detail_val.json",
+        },
+        "coco_detail_minival": {
+            "img_dir": "pascal/detail-api/VOCdevkit/VOC2010/val",
+            "ann_file": "pascal/coco_detail_minival.json",
+        },
     }
 
     @staticmethod
