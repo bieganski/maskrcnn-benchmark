@@ -173,6 +173,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_proposals = proposals
 
         semantic_targets = [getMulticlassMask(x) for x in targets]
+        torch.set_printoptions(profile="full")
         print(semantic_targets[0])
         exit(1)
         # semantic segmentation does not need boxes
