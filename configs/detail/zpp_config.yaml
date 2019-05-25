@@ -45,8 +45,8 @@ MODEL:
   MASK_ON: True
   IMAGEMASK_ON: False
 DATASETS:
-  TRAIN: ("coco_detail_keypoints",)
-#   TRAIN: ("keypoints_coco_2014_train",)
+#  TRAIN: ("coco_detail_keypoints",)
+   TRAIN: ("coco_detail_train",)
 #  TRAIN: ("coco_2017_val", "keypoints_coco_2017_val",)
 #  TRAIN: ("keypoints_coco_2017_val",)
 #  TEST:
