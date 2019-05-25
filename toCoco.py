@@ -33,6 +33,7 @@ def compressedRLEtoPolys(segmentation):
 
     annotation = {
             "segmentation": [],
+            "semantic": segmentation,
             "area": ground_truth_area.tolist(),
             "bbox": ground_truth_bounding_box.tolist()
         }
@@ -109,6 +110,7 @@ class DetailToCoco:
         id = 1
         for kpt_obj in kpts:
             kpt_obj['segmentation'] = [[]]
+            kpt_obj['semantic'] = [[]]
             kpt_obj['area'] = 0
             kpt_obj['id'] = id
             kpt_obj['iscrowd'] = 0
@@ -121,7 +123,7 @@ class DetailToCoco:
         for el in segm:
             poly_segm_anno = compressedRLEtoPolys(el['segmentation'])
             el['segmentation'] = poly_segm_anno['segmentation']
-            
+            el['semantic'] = poly_segm_anno['semantic']
             # full check is ommitted because sometimes estimated bbox size differs from the ground truth one
             # and we should probably stick to the one given; area is always ok
             # if we use only segmentation we can make

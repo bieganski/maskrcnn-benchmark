@@ -1,10 +1,26 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 import torch
+import numpy as np
 
 from .box_head.box_head import build_roi_box_head
 from .mask_head.mask_head import build_roi_mask_head
 from .keypoint_head.keypoint_head import build_roi_keypoint_head
 
+def getMulticlassMask(boxlist):
+    masks = boxlist.get_field('semantic_masks')
+    shape = masks[0].size()
+    multicategorical_mask = np.zeros((shape[0], shape[1]))
+
+    for mask, cat in zip(masks, boxlist.get_field('labels')):
+        mask = (mask.cpu()).numpy()
+        cols = np.argmax(mask[0] == -1) # first_padded_column_id
+        if cols == 0 and mask[0][0] != -1: cols = mask.shape[1]
+        mask = mask[mask != -1]
+        if len(mask) > 0:
+            rows = int(len(mask) / cols)
+            multicategorical_mask[np.nonzero(mask.reshape((rows, cols)))] = cat.cpu()
+
+    return multicategorical_mask
 
 class CombinedROIHeads(torch.nn.ModuleDict):
     """
@@ -108,6 +124,10 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # box_targets = targets
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
+
+        # uncomment to see multiclass masks
+        # for x in targets:
+        #     print(getMulticlassMask(x))
 
         semantic_features = features
         semantic_proposals = proposals
