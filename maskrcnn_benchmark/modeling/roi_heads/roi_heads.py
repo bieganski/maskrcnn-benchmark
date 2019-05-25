@@ -121,8 +121,8 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # probably not the most efficient way to do that
 
         # uncomment to see multiclass masks
-        # for x in targets:
-        #     print(getMulticlassMask(x))
+        for x in targets:
+            print(getMulticlassMask(x).size())
 
         semantic_features = features
         semantic_proposals = proposals
