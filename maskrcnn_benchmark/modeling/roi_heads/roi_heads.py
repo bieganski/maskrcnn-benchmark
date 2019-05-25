@@ -173,9 +173,9 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_proposals = proposals
 
         semantic_targets = [getMulticlassMask(x) for x in targets]
-        torch.set_printoptions(profile="full")
-        print(semantic_targets[0])
-        exit(1)
+        # torch.set_printoptions(profile="full")
+        # print(semantic_targets[0])
+        # exit(1)
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
             err = ("BATCH SIZE OF {} ERROR: Semantic Segmentation works on single batch, "
