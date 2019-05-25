@@ -96,10 +96,60 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
     def forward(self, features, proposals, targets=None):
         losses = {}
-
+        test = not bool(targets)
         # box_targets = targets
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
+
+        semantic_features = features
+        semantic_proposals = proposals
+        semantic_targets = targets
+
+        if not test:
+            nonsemantic_targets = []
+            for it, boxlist in enumerate(targets):
+                ids = []
+                for _index, cat in enumerate(boxlist.get_field('labels')):
+                    if cat <= 20:
+                        ids.append(_index)
+
+                boxes = [(boxlist.bbox[index]).tolist() for index in ids]
+                boxes = torch.as_tensor(boxes).reshape(-1, 4)  # guard against no boxes
+                boxlist.bbox = boxes.cuda()
+
+                filtered_category_ids = boxlist.get_field('labels')
+                filtered_category_ids = torch.tensor([filtered_category_ids[index] for index in ids])
+                boxlist.add_field("labels", filtered_category_ids.cuda())
+
+                filtered_sgms = boxlist.get_field('masks')
+                filtered_sgms.polygons = [filtered_sgms.polygons[index] for index in ids]
+                boxlist.add_field('masks', filtered_sgms)
+
+                filtered_kpts = boxlist.get_field('keypoints')
+                keypoints = [(filtered_kpts.keypoints[index]).tolist() for index in ids]
+
+                device = keypoints.device if isinstance(keypoints, torch.Tensor) else torch.device('cpu')
+                filtered_kpts.keypoints = torch.as_tensor(keypoints, dtype=torch.float32, device=device)
+                num_keypoints = filtered_kpts.keypoints.shape[0]
+
+                if num_keypoints:
+                    filtered_kpts.keypoints = (filtered_kpts.keypoints.view(num_keypoints, -1, 3)).cuda()
+                boxlist.add_field('keypoints', filtered_kpts)
+
+                assert len(boxes) == len(filtered_category_ids) == len(filtered_sgms.polygons) == len(
+                    filtered_kpts.keypoints)
+                if len(ids) > 0:
+                    nonsemantic_targets.append((it, boxlist))
+
+            if (len(nonsemantic_targets) == 0):
+                return losses
+
+            ids = [x[0] for x in nonsemantic_targets]
+            targets = [x[1] for x in nonsemantic_targets]
+            features = [features[index] for index in ids]
+            proposals = [proposals[index] for index in ids]
+
+
 
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:

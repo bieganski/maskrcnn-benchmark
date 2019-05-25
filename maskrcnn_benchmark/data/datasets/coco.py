@@ -1,6 +1,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 import torch
 import torchvision
+import numpy as np
+from detail import mask as maskUtils
 
 from maskrcnn_benchmark.structures.bounding_box import BoxList
 from maskrcnn_benchmark.structures.segmentation_mask import SegmentationMask
@@ -9,6 +11,11 @@ from maskrcnn_benchmark.structures.keypoint import PersonKeypoints
 
 min_keypoints_per_image = 10
 
+
+def _pad(shape, array):
+    padded = np.full(tuple(shape), -1)
+    padded[:array.shape[0],:array.shape[1]] = array
+    return padded
 
 def _count_visible_keypoints(anno):
     return sum(sum(1 for v in ann["keypoints"][2::3] if v > 0) for ann in anno)
@@ -92,13 +99,17 @@ class COCODataset(torchvision.datasets.coco.CocoDetection):
         masks = SegmentationMask(masks, img.size)
         target.add_field("masks", masks)
 
-        semantic_masks = anno[0]["semantic_segmentation"] # should be zeros of that shape
-        for obj in anno:
-            semantic_masks = [[mask_pixel(obj["category_id"], pair) for pair in zip(*pairs)] for pairs in zip(semantic_masks, obj["semantic_segmentation"])]
-
+        # padding required because pytorch wants even sized dims
+        semantic_masks = [maskUtils.decode(obj["semantic"]) if obj["semantic"] != [[]] else np.asarray([[]]) for obj in anno]
+        shape = [0,0]
+        for x in semantic_masks:
+            if x.shape[0] > shape[0]: shape[0] = x.shape[0]
+            if x.shape[1] > shape[1]: shape[1] = x.shape[1]
+        semantic_masks = [_pad(shape, x) for x in semantic_masks]
         semantic_masks = torch.tensor(semantic_masks)
-        target.add_field("imgmask", semantic_masks)
-        assert (isinstance(semantic_masks, torch.Tensor))
+        target.add_field("semantic_masks", semantic_masks)
+
+        # assert (isinstance(semantic_masks, torch.Tensor))
         assert (list(semantic_masks.size()) == list(img.size))
 
         if anno:
