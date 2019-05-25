@@ -19,7 +19,8 @@ class SegmentationMaskLoss(object):
         gt = gt[0] # TODO wieksze batche
         assert gt.size() == x.size()[-2:]
         dim_ok_gt = torch.zeros_like(x, requires_grad=True)
-
+        print(type(gt))
+        print(gt)
         # thats lame, but should works
         for i in range(gt.size(0) + 1):
             for j in range(gt.size(1) + 1):
