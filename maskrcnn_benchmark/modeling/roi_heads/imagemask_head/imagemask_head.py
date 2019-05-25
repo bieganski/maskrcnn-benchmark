@@ -23,7 +23,7 @@ class ImageMaskHead(torch.nn.Module):
         Arguments:
             features (tuple[Tensor]): feature-maps from possibly several levels
             img_sizes (list(Int, Int)): [(W, H)], but temporarily len(lst) == 1 # TODO
-            targets (list[BoxList], optional): the ground-truth targets.
+            targets (list[torch.Tensor], optional): the ground-truth targets.
 
         Returns:
             x (Tensor): the result of the feature extractor

@@ -40,7 +40,7 @@ MODEL:
     SHARE_BOX_FEATURE_EXTRACTOR: False
   ROI_IMAGEMASK_HEAD:
     PREDICTOR: "MaskRCNNFPNImageMaskPredictor"
-    NUM_CLASSES: 459 # TODO, w detailu jest 0-458, ale chyba nie przeszkadza jak ulatwimy indeksowanie +1)
+    NUM_CLASSES: 60 # TODO
   KEYPOINT_ON: True
   MASK_ON: True
   IMAGEMASK_ON: False

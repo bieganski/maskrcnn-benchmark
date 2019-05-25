@@ -22,7 +22,7 @@ def getMulticlassMask(boxlist):
             rows = int(len(mask) / cols)
             multicategorical_mask[np.nonzero(mask.reshape((rows, cols)))] = cat.cpu()
 
-    return multicategorical_mask
+    return torch.Tensor(multicategorical_mask, device='cpu')
 
 
 class CombinedROIHeads(torch.nn.ModuleDict):
@@ -120,13 +120,6 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
 
-        # uncomment to see multiclass masks
-        for x in targets:
-            print(getMulticlassMask(x).shape) # ndarray
-
-        semantic_features = features
-        semantic_proposals = proposals
-        semantic_targets = targets
 
         if not test:
             nonsemantic_targets = []
@@ -172,7 +165,14 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             features = [features[index] for index in ids]
             proposals = [proposals[index] for index in ids]
 
+        # uncomment to see multiclass masks
+        # for x in targets:
+        #     print(getMulticlassMask(x).shape)  # ndarray
+        #
+        # semantic_features = features
+        # semantic_proposals = proposals
 
+        semantic_targets = [getMulticlassMask(x) for x in targets]
 
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
@@ -180,7 +180,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
                    + "due to resizing FPN output").format(features[0].size()[0])
             assert features[0].size()[0] == 1, err
             y, proposals_imagemask, loss_imagemask \
-                = self.imagemask(features, targets) # def forward(self, features, img_sizes, targets=None):
+                = self.imagemask(features, [tuple(x.shape) for x in semantic_targets], semantic_targets)
             if self.training:
                 losses.update(loss_imagemask)
             print(losses)
