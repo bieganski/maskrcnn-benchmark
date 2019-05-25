@@ -30,6 +30,8 @@ class SegmentationMaskLoss(object):
 
         x = self.soft(x, dim=0)
         loss = self.loss(x, dim_ok_gt)
+        print("<<<<<<<<<<<<LOSS:")
+        print(loss)
         return loss
 
 
