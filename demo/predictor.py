@@ -13,90 +13,8 @@ from maskrcnn_benchmark.utils import cv2_util
 
 class COCODemo(object):
     # COCO categories for pretty print
-    _CATEGORIES = [
-        "__background",
-        "person",
-        "bicycle",
-        "car",
-        "motorcycle",
-        "airplane",
-        "bus",
-        "train",
-        "truck",
-        "boat",
-        "traffic light",
-        "fire hydrant",
-        "stop sign",
-        "parking meter",
-        "bench",
-        "bird",
-        "cat",
-        "dog",
-        "horse",
-        "sheep",
-        "cow",
-        "elephant",
-        "bear",
-        "zebra",
-        "giraffe",
-        "backpack",
-        "umbrella",
-        "handbag",
-        "tie",
-        "suitcase",
-        "frisbee",
-        "skis",
-        "snowboard",
-        "sports ball",
-        "kite",
-        "baseball bat",
-        "baseball glove",
-        "skateboard",
-        "surfboard",
-        "tennis racket",
-        "bottle",
-        "wine glass",
-        "cup",
-        "fork",
-        "knife",
-        "spoon",
-        "bowl",
-        "banana",
-        "apple",
-        "sandwich",
-        "orange",
-        "broccoli",
-        "carrot",
-        "hot dog",
-        "pizza",
-        "donut",
-        "cake",
-        "chair",
-        "couch",
-        "potted plant",
-        "bed",
-        "dining table",
-        "toilet",
-        "tv",
-        "laptop",
-        "mouse",
-        "remote",
-        "keyboard",
-        "cell phone",
-        "microwave",
-        "oven",
-        "toaster",
-        "sink",
-        "refrigerator",
-        "book",
-        "clock",
-        "vase",
-        "scissors",
-        "teddy bear",
-        "hair drier",
-        "toothbrush",
-    ]
 
+    # TODO dla 20 klas to trzeba będzie zmienić
     CATEGORIES = ['__background',
                   'aeroplane',
                   'bicycle',
@@ -435,7 +353,49 @@ import numpy as np
 import matplotlib.pyplot as plt
 from maskrcnn_benchmark.structures.keypoint import PersonKeypoints
 
-def vis_keypoints(img, kps, kp_thresh=2, alpha=0.7):
+def vis_keypoints(img, kps, kp_thresh=1, alpha=0.7):
+    dataset_keypoints = PersonKeypoints.NAMES
+    kp_lines = PersonKeypoints.CONNECTIONS
+
+    cmap = plt.get_cmap('rainbow')
+    colors = [cmap(i) for i in np.linspace(0, 1, len(kp_lines) + 2)]
+    colors = [(c[2] * 255, c[1] * 255, c[0] * 255) for c in colors]
+
+    # Perform the drawing on a copy of the image, to allow for blending.
+    kp_mask = np.copy(img)
+
+    # Draw the keypoints.
+
+    for i in range(14):
+        if kps[2, i] > kp_thresh:
+            cv2.circle(
+                kp_mask, (kps[0][i], kps[1][i]),
+                radius=7, color=colors[i], thickness=-1, lineType=cv2.LINE_AA)
+    #
+    # for l in range(len(kp_lines)):
+    #     i1 = kp_lines[l][0]
+    #     i2 = kp_lines[l][1]
+    #     p1 = kps[0, i1], kps[1, i1]
+    #     p2 = kps[0, i2], kps[1, i2]
+    #     # if kps[2, i1] > kp_thresh and kps[2, i2] > kp_thresh:
+    #     #     cv2.line(
+    #     #         kp_mask, p1, p2,
+    #     #         color=colors[l], thickness=2, lineType=cv2.LINE_AA)
+    #     # if kps[2, i1] > kp_thresh:
+    #     #     cv2.circle(
+    #     #         kp_mask, p1,
+    #     #         radius=3, color=colors[l], thickness=-1, lineType=cv2.LINE_AA)
+    #     if kps[2, i2] > kp_thresh:
+    #         cv2.circle(
+    #             kp_mask, p2,
+    #             radius=7, color=colors[l], thickness=-1, lineType=cv2.LINE_AA)
+
+    # Blend the keypoints.
+    return cv2.addWeighted(img, 1.0 - alpha, kp_mask, alpha, 0)
+
+
+
+def _vis_keypoints(img, kps, kp_thresh=0.9, alpha=0.7):
     """Visualizes keypoints (adapted from vis_one_image).
     kps has shape (4, #keypoints) where 4 rows are (x, y, logit, prob).
     """
@@ -450,6 +410,7 @@ def vis_keypoints(img, kps, kp_thresh=2, alpha=0.7):
     # Perform the drawing on a copy of the image, to allow for blending.
     kp_mask = np.copy(img)
 
+    print(kps)
     # Draw mid shoulder / mid hip first for better visualization.
     mid_shoulder = (
         kps[:2, dataset_keypoints.index('right_shoulder')] +
@@ -463,7 +424,10 @@ def vis_keypoints(img, kps, kp_thresh=2, alpha=0.7):
     sc_mid_hip = np.minimum(
         kps[2, dataset_keypoints.index('right_hip')],
         kps[2, dataset_keypoints.index('left_hip')])
-    nose_idx = dataset_keypoints.index('head')
+    print(mid_shoulder)
+    print(sc_mid_shoulder)
+    exit(1)
+    nose_idx = dataset_keypoints.index('neck')
     if sc_mid_shoulder > kp_thresh and kps[2, nose_idx] > kp_thresh:
         cv2.line(
             kp_mask, tuple(mid_shoulder), tuple(kps[:2, nose_idx]),

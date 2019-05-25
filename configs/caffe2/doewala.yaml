@@ -1,6 +1,7 @@
 MODEL:
   META_ARCHITECTURE: "GeneralizedRCNN"
-  WEIGHT: "model_final.pth"
+#  WEIGHT: "model_final.pth"
+  WEIGHT: "catalog://Caffe2Detectron/COCO/35858933/e2e_mask_rcnn_R-50-FPN_1x"
   BACKBONE:
     CONV_BODY: "R-50-FPN"
   RESNETS:
