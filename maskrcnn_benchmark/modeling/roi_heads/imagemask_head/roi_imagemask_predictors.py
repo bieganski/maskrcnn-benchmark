@@ -12,7 +12,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
         self.in_channels = cfg.MODEL.RESNETS.RES2_OUT_CHANNELS
         assert self.in_channels == 256
         self.num_cls = cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
-        assert self.num_cls == 459
+        assert self.num_cls == 60
         self.interp = F.interpolate
         self.conv1 = nn.Conv2d(self.in_channels, self.num_cls, kernel_size=1)
 
