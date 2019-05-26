@@ -22,8 +22,8 @@ class SegmentationMaskLoss(object):
         print(type(gt))
         gt = gt.int()
         # thats lame, but should works
-        for i in range(gt.size(0) + 1):
-            for j in range(gt.size(1) + 1):
+        for i in range(gt.size(0)):
+            for j in range(gt.size(1)):
                 cls = gt[i, j].item()
                 dim_ok_gt[cls, i, j] = 1
 
