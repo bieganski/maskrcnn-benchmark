@@ -196,7 +196,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_features = features
         # semantic_proposals = proposals
 
-        semantic_targets = [getCWHMulticlassMask(x) for x in targets]
+        semantic_targets = [torch.Tensor(getCWHMulticlassMask(x), dtype='int32') for x in targets]
         # torch.set_printoptions(profile="full")
         # print(semantic_targets[0])
         # exit(1)
