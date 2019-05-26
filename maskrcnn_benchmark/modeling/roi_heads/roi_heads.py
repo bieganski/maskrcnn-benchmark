@@ -24,6 +24,27 @@ def getMulticlassMask(boxlist):
 
     return torch.Tensor(multicategorical_mask, device='cpu')
 
+segm_cats_number = 60 # including background
+# CWK stands for Class (including background) x Weight x Height
+def getCWHMulticlassMask(boxlist):
+    masks = boxlist.get_field('semantic_masks')
+    shape = masks[0].size()
+    multicategorical_mask = np.zeros((segm_cats_number, shape[0], shape[1]), dtype=int)
+    multicategorical_mask[0] = np.ones((shape[0], shape[1]), dtype=int) # background_mask init
+
+    for mask, cat in zip(masks, boxlist.get_field('labels')):
+        mask = (mask.cpu()).numpy()
+        cols = np.argmax(mask[0] == -1) # first_padded_column_id
+        if cols == 0 and mask[0][0] != -1: cols = mask.shape[1]
+        mask = mask[mask != -1]
+        if len(mask) > 0:
+            rows = int(len(mask) / cols)
+            cat = cat.cpu()
+            nonzero_elems = np.nonzero(mask.reshape((rows, cols)))
+            multicategorical_mask[cat][nonzero_elems] = 1
+            multicategorical_mask[0][nonzero_elems] = 0
+
+    return multicategorical_mask
 
 class CombinedROIHeads(torch.nn.ModuleDict):
     """
@@ -120,6 +141,9 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # maybe do that in preprocessing and add a flag to determine id choices
         # probably not the most efficient way to do that
 
+        # uncomment to see multiclass masks
+        for x in targets:
+            print(getCWHMulticlassMask(x))
 
         if not test:
             nonsemantic_targets = []
