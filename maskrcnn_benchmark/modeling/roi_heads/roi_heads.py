@@ -206,7 +206,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
                    + "due to resizing FPN output").format(features[0].size()[0])
             assert features[0].size()[0] == 1, err
             y, proposals_imagemask, loss_imagemask \
-                = self.imagemask(features, [tuple(x[1:].shape) for x in semantic_targets], semantic_targets)
+                = self.imagemask(features, [tuple(x[-2:].shape) for x in semantic_targets], semantic_targets)
             if self.training:
                 losses.update(loss_imagemask)
             print(losses)
