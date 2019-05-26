@@ -23,7 +23,6 @@ class SegmentationMaskLoss(object):
         # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
         # dim_ok_gt = torch.zeros_like(x, requires_grad=False, device='cuda')
         # print(type(gt))
-        gt = gt.int()
         # thats lame, but should works
         # for i in range(gt.size(0)):
         #     for j in range(gt.size(1)):
