@@ -18,7 +18,8 @@ class SegmentationMaskLoss(object):
         assert x.size()[0] == self.num_cls
         gt = gt[0] # TODO wieksze batche
         assert gt.size() == x.size()[-2:]
-        dim_ok_gt = torch.zeros_like(x, requires_grad=True)
+        # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
+        dim_ok_gt = torch.zeros_like(x, requires_grad=False)
         print(type(gt))
         gt = gt.int()
         # thats lame, but should works
