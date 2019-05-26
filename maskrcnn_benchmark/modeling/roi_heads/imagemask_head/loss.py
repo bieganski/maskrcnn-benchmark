@@ -27,7 +27,7 @@ class SegmentationMaskLoss(object):
                 cls = gt[i, j].item()
                 dim_ok_gt[cls, i, j] = 1
 
-        assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
+        # assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
 
         x = self.soft(x, dim=0)
         loss = self.loss(x, dim_ok_gt)
