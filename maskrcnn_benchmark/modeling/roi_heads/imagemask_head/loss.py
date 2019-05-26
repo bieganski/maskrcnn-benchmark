@@ -16,7 +16,9 @@ class SegmentationMaskLoss(object):
         assert x.size()[0] == 1
         x = x.squeeze(0)
         assert x.size()[0] == self.num_cls
+        print(gt)
         gt = gt[0] # TODO wieksze batche
+        assert False, gt
         assert gt.size() == x.size()
         # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
         # dim_ok_gt = torch.zeros_like(x, requires_grad=False, device='cuda')
