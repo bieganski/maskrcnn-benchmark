@@ -205,7 +205,6 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             err = ("BATCH SIZE OF {} ERROR: Semantic Segmentation works on single batch, "
                    + "due to resizing FPN output").format(features[0].size()[0])
             assert features[0].size()[0] == 1, err
-            assert False, tuple(semantic_targets[0].shape)
             y, proposals_imagemask, loss_imagemask \
                 = self.imagemask(features, [tuple(x.shape[-2:]) for x in semantic_targets], semantic_targets)
             if self.training:
