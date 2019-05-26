@@ -19,14 +19,14 @@ class SegmentationMaskLoss(object):
         gt = gt[0] # TODO wieksze batche
         assert gt.size() == x.size()[-2:]
         # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
-        dim_ok_gt = torch.zeros_like(x, requires_grad=False)
+        dim_ok_gt = torch.zeros_like(x, requires_grad=False, device='cuda')
         print(type(gt))
         gt = gt.int()
         # thats lame, but should works
-        # for i in range(gt.size(0)):
-        #     for j in range(gt.size(1)):
-        #         cls = gt[i, j].item()
-        #         dim_ok_gt[cls, i, j] = 1
+        for i in range(gt.size(0)):
+            for j in range(gt.size(1)):
+                cls = gt[i, j].item()
+                dim_ok_gt[cls, i, j] = 1
 
         # assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
 
