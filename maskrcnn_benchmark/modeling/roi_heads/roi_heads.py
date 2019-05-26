@@ -142,8 +142,8 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # probably not the most efficient way to do that
 
         # uncomment to see multiclass masks
-        for x in targets:
-            print(getCWHMulticlassMask(x))
+        # for x in targets:
+        #     print(getCWHMulticlassMask(x))
 
         if not test:
             nonsemantic_targets = []
@@ -196,7 +196,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_features = features
         # semantic_proposals = proposals
 
-        semantic_targets = [getMulticlassMask(x) for x in targets]
+        semantic_targets = [getCWHMulticlassMask(x) for x in targets]
         # torch.set_printoptions(profile="full")
         # print(semantic_targets[0])
         # exit(1)

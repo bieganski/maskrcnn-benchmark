@@ -17,21 +17,21 @@ class SegmentationMaskLoss(object):
         x = x.squeeze(0)
         assert x.size()[0] == self.num_cls
         gt = gt[0] # TODO wieksze batche
-        assert gt.size() == x.size()[-2:]
+        assert gt.size() == x.size()
         # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
-        dim_ok_gt = torch.zeros_like(x, requires_grad=False, device='cuda')
-        print(type(gt))
+        # dim_ok_gt = torch.zeros_like(x, requires_grad=False, device='cuda')
+        # print(type(gt))
         gt = gt.int()
         # thats lame, but should works
-        for i in range(gt.size(0)):
-            for j in range(gt.size(1)):
-                cls = gt[i, j].item()
-                dim_ok_gt[cls, i, j] = 1
+        # for i in range(gt.size(0)):
+        #     for j in range(gt.size(1)):
+        #         cls = gt[i, j].item()
+        #         dim_ok_gt[cls, i, j] = 1
 
         # assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
 
         x = self.soft(x, dim=0)
-        loss = self.loss(x, dim_ok_gt)
+        loss = self.loss(x, gt)
         print("<<<<<<<<<<<<LOSS:")
         print(loss)
         return loss
