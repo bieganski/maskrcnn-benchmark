@@ -24,7 +24,7 @@ class SegmentationMaskLoss(object):
         # thats lame, but should works
         for i in range(gt.size(0) + 1):
             for j in range(gt.size(1) + 1):
-                cls = gt[i, j]
+                cls = gt[i, j].item()
                 dim_ok_gt[cls, i, j] = 1
 
         assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
