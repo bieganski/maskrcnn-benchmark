@@ -40,7 +40,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
             w, h = (img_sizes[i][-2], img_sizes[i][-1])
             print(w, h)
             print("ostro")
-            res[i, :, :w, :h] = self.interp(single_feature_map,
+            res[i, :, :w, :h] = self.interp(single_feature_map.unsqueeze(0),
                                             size=(w, h),
                                             mode='nearest')
 
