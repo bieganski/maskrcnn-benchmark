@@ -50,7 +50,7 @@ def do_coco_evaluation(
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
     if 'semantic' in iou_types:
         logger.info('AUUUUUUUUUUUUUUUUU')
-        assert False
+        assert False, predictions
         # coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
 
 
