@@ -6,8 +6,8 @@ class SegmentationMaskLoss(object):
     def __init__(self, num_cls):
         super(SegmentationMaskLoss, self).__init__()
         self.num_cls = num_cls
-        self.soft = F.softmax
-        self.loss = F.binary_cross_entropy
+        # self.soft = F.softmax
+        # self.loss = F.binary_cross_entropy
         self.loss2 = F.binary_cross_entropy_with_logits
 
     def __call__(self, x, gt):
