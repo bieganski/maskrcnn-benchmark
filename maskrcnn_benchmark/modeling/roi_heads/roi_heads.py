@@ -199,12 +199,12 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         imagemasks = [getCWHMulticlassMask(x) for x in targets]
         shapes = [x.shape for x in imagemasks]
 
-        def including_rectangle(shapes):
+        def including_rectangle(c, shapes):
             w, h = 0, 0
             for shape in shapes:
                 w = max(w, shape[0])
                 h = max(h, shape[1])
-            return (w, h)
+            return (c, w, h)
 
         new_shape = including_rectangle(shapes)
 
