@@ -225,7 +225,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             if self.training:
                 losses.update(loss_imagemask)
             print(losses)
-            return y, None, losses
+            return y, proposals_imagemask, losses
 
         ################### TODO
         # return None, None, losses
