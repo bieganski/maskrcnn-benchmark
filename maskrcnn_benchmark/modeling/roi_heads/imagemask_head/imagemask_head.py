@@ -14,7 +14,7 @@ class ImageMaskHead(torch.nn.Module):
     def _to_proposals(self, x):
         # x - (N, K, 128, 128), where K is num classes + 1 (for detail - 60)
         # return - proposal (N, 128, 128), where proposal[i, j] = k iff pixel`s (i, j) class is k
-        proposal = torch.max(x, dim=1)[1]
+        proposal = torch.max(x, dim=1)[1] # torch max returns (value, indices)
         return proposal
 
     def forward(self, features, img_sizes, targets=None):

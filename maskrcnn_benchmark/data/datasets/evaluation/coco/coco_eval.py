@@ -48,6 +48,11 @@ def do_coco_evaluation(
     if 'keypoints' in iou_types:
         logger.info('Preparing keypoints results')
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
+    if 'keypoints' in iou_types:
+        logger.info('AUUUUUUUUUUUUUUUUU')
+        assert False
+        # coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
+
 
     results = COCOResults(*iou_types)
     logger.info("Evaluating predictions")
