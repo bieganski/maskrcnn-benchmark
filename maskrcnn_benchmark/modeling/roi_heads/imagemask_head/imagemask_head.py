@@ -16,7 +16,7 @@ class ImageMaskHead(torch.nn.Module):
         # return - proposal (N, 128, 128), where proposal[i, j] = k iff pixel`s (i, j) class is k
         # assert x.size()[-1] == self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES, x.size()[-1]
         proposal = torch.max(x, dim=1)[1]
-        assert list(proposal.size()) == [1, x.size()[-2], x.size()[-1]], (list(proposal.size()),[1, x.size()[-2], x.size()[-1]])
+        # assert list(proposal.size()) == [1, x.size()[-2], x.size()[-1]], (list(proposal.size()),[1, x.size()[-2], x.size()[-1]])
         return proposal
 
     def forward(self, features, img_sizes, targets=None):
@@ -35,7 +35,7 @@ class ImageMaskHead(torch.nn.Module):
                 head. During testing, returns an empty dict.
         """
         # features - sth like (tensor[1,256,_w,_h],,)
-        assert(features[0].size()[0] == 1) # only single batch supported
+        # assert(features[0].size()[0] == 1) # only single batch supported
         # assert(targets.size()[0] == 1) # only single batch supported
 
 
@@ -45,7 +45,7 @@ class ImageMaskHead(torch.nn.Module):
 
         if self.training:
             assert targets is not None
-            assert len(targets) == 1 # single batch
+            # assert len(targets) == 1 # single batch
             loss_imagemask = self.loss_evaluator(x, targets)
             return x, proposals, dict(loss_imagemask=loss_imagemask)
 

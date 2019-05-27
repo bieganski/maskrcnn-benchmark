@@ -196,9 +196,29 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_features = features
         # semantic_proposals = proposals
 
-        semantic_targets = [torch.FloatTensor(getCWHMulticlassMask(x)).cuda() for x in targets]
+        imagemasks = [getCWHMulticlassMask(x) for x in targets]
+        shapes = [x.shape for x in imagemasks]
+
+        def including_rectangle(shapes):
+            w, h = 0, 0
+            for shape in shapes:
+                w = max(w, shape[0])
+                h = max(h, shape[1])
+            return (w, h)
+
+        new_shape = including_rectangle(shapes)
+
+        def _pad(shape, array, padval = -1):
+            padded = np.full(tuple(shape), padval)
+            padded[:array.shape[0], :array.shape[1]] = array
+            return padded
+
+        resized_imagemasks = [_pad(new_shape, x, 0) for x in imagemasks]
+
+        semantic_targets = [torch.FloatTensor(x).unsqueeze(0).cuda() for x in resized_imagemasks]
+        semantic_targets = torch.cat(tuple(semantic_targets))
         # torch.set_printoptions(profile="full")
-        # print(semantic_targets[0])
+        assert False, semantic_targets.shape
         # exit(1)
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
