@@ -32,8 +32,8 @@ class MaskRCNNImageMakPredictor(nn.Module):
         x = x[0] # output z FPNa największej rozdzielczości
 
         w, h = including_rectangle(img_sizes)
-        new_shape = tuple([x[0], x[1], w, h])
-        
+        new_shape = tuple([x.shape[0], x.shape[1], w, h])
+
         res = torch.zeros(new_shape)
         for i, single_feature_map in enumerate(x):
             img_size = (img_sizes[-2], img_sizes[-1])
