@@ -47,6 +47,7 @@ MODEL:
 DATASETS:
 #  TRAIN: ("coco_detail_keypoints",)
    TRAIN: ("coco_detail_train",)
+   TEST: ("coco_detail_minival",)
 #  TRAIN: ("coco_2017_val", "keypoints_coco_2017_val",)
 #  TRAIN: ("keypoints_coco_2017_val",)
 #  TEST:
