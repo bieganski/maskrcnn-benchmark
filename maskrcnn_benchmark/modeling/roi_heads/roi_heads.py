@@ -189,44 +189,37 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             features = [features[index] for index in ids]
             proposals = [proposals[index] for index in ids]
 
-        # uncomment to see multiclass masks
-        # for x in targets:
-        #     print(getMulticlassMask(x).shape)  # ndarray
-        #
-        # semantic_features = features
-        # semantic_proposals = proposals
-        assert False, images
-        imagemasks = [getCWHMulticlassMask(x) for x in targets]
-        shapes = [x.shape for x in imagemasks]
 
-        def including_rectangle(c, shapes):
-            w, h = 0, 0
-            for shape in shapes:
-                w = max(w, shape[-2])
-                h = max(h, shape[-1])
-            return (c, w, h)
 
-        num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
-        new_shape = including_rectangle(num_cls, shapes)
 
-        def _pad(shape, array, padval = -1):
-            padded = np.full(tuple(shape), padval)
-            # assert False, (array.shape, new_shape)
-            padded[:, :array.shape[-2], :array.shape[-1]] = array
-            return padded
 
-        resized_imagemasks = [_pad(new_shape, x, 0) for x in imagemasks]
-
-        semantic_targets = [torch.FloatTensor(x).unsqueeze(0).cuda() for x in resized_imagemasks]
-        semantic_targets = torch.cat(tuple(semantic_targets))
-        # torch.set_printoptions(profile="full")
-        # assert False, semantic_targets.shape
-        # exit(1)
-        # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
-            # err = ("BATCH SIZE OF {} ERROR: Semantic Segmentation works on single batch, "
-            #        + "due to resizing FPN output").format(features[0].size()[0])
-            # assert features[0].size()[0] == 1, err
+            shapes = images.image_sizes
+
+            def including_rectangle(c, shapes):
+                w, h = 0, 0
+                for shape in shapes:
+                    w = max(w, shape[-2])
+                    h = max(h, shape[-1])
+                return (c, w, h)
+
+            num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
+            new_shape = including_rectangle(num_cls, shapes)
+
+            def _pad(shape, array, padval=-1):
+                padded = np.full(tuple(shape), padval)
+                # assert False, (array.shape, new_shape)
+                padded[:, :array.shape[-2], :array.shape[-1]] = array
+                return padded
+
+            if self.training:
+                imagemasks = [getCWHMulticlassMask(x) for x in targets]
+                resized_imagemasks = [_pad(new_shape, x, 0) for x in imagemasks]
+                semantic_targets = [torch.FloatTensor(x).unsqueeze(0).cuda() for x in resized_imagemasks]
+                semantic_targets = torch.cat(tuple(semantic_targets))
+            else:
+                semantic_targets = None
+
             y, proposals_imagemask, loss_imagemask \
                 = self.imagemask(features, shapes, semantic_targets)
             if self.training:
