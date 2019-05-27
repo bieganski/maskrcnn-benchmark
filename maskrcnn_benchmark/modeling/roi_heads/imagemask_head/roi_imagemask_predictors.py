@@ -27,13 +27,13 @@ class MaskRCNNImageMakPredictor(nn.Module):
             for shape in shapes:
                 w = max(w, shape[-2])
                 h = max(h, shape[-1])
-            return [w, h]
+            return w, h
 
-        assert False, x[0].shape
         x = x[0] # output z FPNa największej rozdzielczości
 
-        new_shape = [x[0], x[1]] + including_rectangle(img_sizes) # batch size, num_features, w, h
-
+        w, h = including_rectangle(img_sizes)
+        new_shape = tuple([x[0], x[1], w, h])
+        
         res = torch.zeros(new_shape)
         for i, single_feature_map in enumerate(x):
             img_size = (img_sizes[-2], img_sizes[-1])
