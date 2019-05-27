@@ -22,6 +22,7 @@ def compute_on_dataset(model, data_loader, device):
         images = images.to(device)
         with torch.no_grad():
             output = model(images)
+            assert False, output
             output = [o.to(cpu_device) for o in output]
         results_dict.update(
             {img_id: result for img_id, result in zip(image_ids, output)}
