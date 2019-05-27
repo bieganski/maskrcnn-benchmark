@@ -34,7 +34,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
         w, h = including_rectangle(img_sizes)
         new_shape = tuple([x.shape[0], x.shape[1], w, h])
 
-        res = torch.zeros(new_shape)
+        res = torch.zeros(new_shape, device='cuda')
         for i, single_feature_map in enumerate(x):
             print(single_feature_map.shape)
             w, h = (img_sizes[i][-2], img_sizes[i][-1])
