@@ -133,7 +133,7 @@ multitrain:
 		cd ./trash3 && rm -rf *; \
 	else mkdir trash3; \
 	fi
-	python -m torch.distributed.launch --nproc_per_node=${NGPUS} ./tools/train_net.py --config-file "./configs/detail/zpp_config_4GPU.yaml"
+	export NGPUS=4; python -m torch.distributed.launch --nproc_per_node=${NGPUS} ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
 
 to_coco:
