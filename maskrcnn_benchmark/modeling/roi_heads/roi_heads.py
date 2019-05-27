@@ -201,8 +201,8 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         def including_rectangle(c, shapes):
             w, h = 0, 0
             for shape in shapes:
-                w = max(w, shape[0])
-                h = max(h, shape[1])
+                w = max(w, shape[-2])
+                h = max(h, shape[-1])
             return (c, w, h)
 
         num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
@@ -210,7 +210,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
         def _pad(shape, array, padval = -1):
             padded = np.full(tuple(shape), padval)
-            assert False, (array.shape, new_shape)
+            # assert False, (array.shape, new_shape)
             padded[:, :array.shape[-2], :array.shape[-1]] = array
             return padded
 
