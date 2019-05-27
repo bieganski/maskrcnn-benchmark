@@ -197,7 +197,6 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_proposals = proposals
 
         imagemasks = [getCWHMulticlassMask(x) for x in targets]
-        shapes = [x.shape for x in imagemasks]
 
         def including_rectangle(c, shapes):
             w, h = 0, 0
@@ -207,11 +206,11 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             return (c, w, h)
 
         num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
-        new_shape = including_rectangle(num_cls, shapes)
+        new_shape = including_rectangle(num_cls, [x.shape for x in imagemasks])
 
         def _pad(shape, array, padval = -1):
             padded = np.full(tuple(shape), padval)
-            assert False, (array.shape)
+            assert False, (array.shape, new_shape)
             padded[:, :array.shape[-2], :array.shape[-1]] = array
             return padded
 
