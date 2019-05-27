@@ -32,26 +32,20 @@ class MaskRCNNImageMakPredictor(nn.Module):
         x = x[0] # output z FPNa największej rozdzielczości
 
         w, h = including_rectangle(img_sizes)
-        new_shape = tuple([x.shape[0], x.shape[1], w, h])
+        new_shape = tuple([x.shape[0], x.shape[1], w, h]) # batch size, 256, w, h
 
         res = torch.zeros(new_shape, device='cuda')
         for i, single_feature_map in enumerate(x):
-            print(single_feature_map.shape)
             w, h = (img_sizes[i][-2], img_sizes[i][-1])
-            print(w, h)
-            print("ostro")
             res[i, :, :w, :h] = self.interp(single_feature_map.unsqueeze(0),
                                             size=(w, h),
                                             mode='nearest')
 
-        # x = self.interp(x, size=img_sizes, mode='nearest')
-        print("---------------------------------------------------------------------------")
         print(res.size())
         print("---------------------------------------------------------------------------")
         res = self.conv1(res)
         print(res.size())
         print("---------------------------------------------------------------------------")
-        # assert list(x.size()) == [1, self.num_cls, img_sizes[0], img_sizes[1]]
         return res
 
 

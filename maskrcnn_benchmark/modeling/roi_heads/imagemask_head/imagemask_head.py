@@ -14,30 +14,10 @@ class ImageMaskHead(torch.nn.Module):
     def _to_proposals(self, x):
         # x - (N, K, 128, 128), where K is num classes + 1 (for detail - 60)
         # return - proposal (N, 128, 128), where proposal[i, j] = k iff pixel`s (i, j) class is k
-        # assert x.size()[-1] == self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES, x.size()[-1]
         proposal = torch.max(x, dim=1)[1]
-        # assert list(proposal.size()) == [1, x.size()[-2], x.size()[-1]], (list(proposal.size()),[1, x.size()[-2], x.size()[-1]])
         return proposal
 
     def forward(self, features, img_sizes, targets=None):
-        """
-        Arguments:
-            features (tuple[Tensor]): feature-maps from possibly several levels
-            img_sizes (list(Int, Int)): [(W, H)], but temporarily len(lst) == 1 # TODO
-            targets (list[torch.Tensor], optional): the ground-truth targets.
-
-        Returns:
-            x (Tensor): the result of the feature extractor
-            proposal (Tensor): during training, the original proposals
-                are returned. During testing, the predicted boxlists are returned
-                with the `mask` field set
-            losses (dict[Tensor]): During training, returns the losses for the
-                head. During testing, returns an empty dict.
-        """
-        # features - sth like (tensor[1,256,_w,_h],,)
-        # assert(features[0].size()[0] == 1) # only single batch supported
-        # assert(targets.size()[0] == 1) # only single batch supported
-
 
         x = self.predictor(features, img_sizes)
 
@@ -45,7 +25,6 @@ class ImageMaskHead(torch.nn.Module):
 
         if self.training:
             assert targets is not None
-            # assert len(targets) == 1 # single batch
             loss_imagemask = self.loss_evaluator(x, targets)
             return x, proposals, dict(loss_imagemask=loss_imagemask)
 
