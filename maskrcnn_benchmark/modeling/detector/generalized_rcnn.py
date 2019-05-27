@@ -72,7 +72,7 @@ class GeneralizedRCNN(nn.Module):
         # print("------------------")
         proposals, proposal_losses = self.rpn(images, features, targets)
         if self.roi_heads:
-            x, result, detector_losses = self.roi_heads(features, proposals, targets)
+            x, result, detector_losses = self.roi_heads(features, proposals, images, targets)
         else:
             # RPN-only models don't have roi_heads
             x = features

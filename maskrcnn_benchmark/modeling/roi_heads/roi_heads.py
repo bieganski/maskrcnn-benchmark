@@ -134,7 +134,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         assert len(boxes) == len(filtered_category_ids) == len(filtered_sgms.polygons) == len(filtered_kpts.keypoints)
         return boxlist
 
-    def forward(self, features, proposals, targets=None):
+    def forward(self, features, proposals, images, targets=None):
         losses = {}
         test = not bool(targets)
         # box_targets = targets
@@ -195,7 +195,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         #
         # semantic_features = features
         # semantic_proposals = proposals
-
+        assert False, images
         imagemasks = [getCWHMulticlassMask(x) for x in targets]
         shapes = [x.shape for x in imagemasks]
 
