@@ -36,7 +36,10 @@ class MaskRCNNImageMakPredictor(nn.Module):
 
         res = torch.zeros(new_shape)
         for i, single_feature_map in enumerate(x):
+            print(single_feature_map.shape)
             w, h = (img_sizes[i][-2], img_sizes[i][-1])
+            print(w, h)
+            print("ostro")
             res[i, :, :w, :h] = self.interp(single_feature_map,
                                             size=(w, h),
                                             mode='nearest')
