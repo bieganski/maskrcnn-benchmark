@@ -29,7 +29,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
                 h = max(h, shape[-1])
             return [w, h]
 
-        assert False, x.shape
+        assert False, x[0]
         x = x[0] # output z FPNa największej rozdzielczości
 
         new_shape = [x[0], x[1]] + including_rectangle(img_sizes) # batch size, num_features, w, h
