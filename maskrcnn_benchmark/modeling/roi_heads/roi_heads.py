@@ -211,8 +211,8 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
         def _pad(shape, array, padval = -1):
             padded = np.full(tuple(shape), padval)
-            assert False, (array.shape[-2],array.shape[-1])
-            padded[:, :array.shape[-2], :array.shape[-1]] = array
+            # assert False, (array.shape[-2],array.shape[-1])
+            padded[..., :array.shape[-2], :array.shape[-1]] = array
             return padded
 
         resized_imagemasks = [_pad(new_shape, x, 0) for x in imagemasks]
