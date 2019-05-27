@@ -13,11 +13,11 @@ class SegmentationMaskLoss(object):
         # gt - lista targetów
         # assert False, (x.size(), gt[0].size())
         # AssertionError: (torch.Size([1, 60, 426, 500]), torch.Size([426, 500]))
-        assert x.size()[0] == 1
-        x = x.squeeze(0)
-        assert x.size()[0] == self.num_cls
-        # print(gt)
-        gt = gt[0] # TODO wieksze batche
+        # assert x.size()[0] == 1
+        # x = x.squeeze(0)
+        # assert x.size()[0] == self.num_cls
+        # # print(gt)
+        # gt = gt[0] # TODO wieksze batche
         # assert False, gt.size
         assert gt.size() == x.size()
         # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
@@ -31,7 +31,8 @@ class SegmentationMaskLoss(object):
 
         # assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
 
-        x = self.soft(x, dim=0)
+        # TODO tu moze zle dzialac przez mismatche obrazkow, zrobic wtedy dla kazdej warstwy pojedynczo
+        x = self.soft(x, dim=1)
         loss = self.loss(x, gt)
         print("<<<<<<<<<<<<LOSS:")
         print(loss)

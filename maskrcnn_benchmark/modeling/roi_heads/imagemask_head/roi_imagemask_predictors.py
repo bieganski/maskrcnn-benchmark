@@ -1,5 +1,6 @@
 from torch import nn
 from torch.nn import functional as F
+import torch
 
 from maskrcnn_benchmark.modeling import registry
 
@@ -20,23 +21,34 @@ class MaskRCNNImageMakPredictor(nn.Module):
     # bierze bezpośrednio output z FPN, upsampluje do rozmiaru obrazka
     # i liczy loss.
     def forward(self, x, img_sizes):
-        # TODO nie biore argumentu 'features', dobrze?
-        # (to nie ma tak że dobrze albo niedobrze)
-        # x[0] - output z FPNa największej rozdzielczości;
-        # powiększamy go do wymiarów obrazka i redukujemy głębokość
-        x = x[0]
-        img_sizes = img_sizes[0]
-        # assert (( x.size()[-2] <= x.size()[-1] ) == ( img_size[0] <= img_size[1] )), (x.size(), img_size)
-        # TODO chyba img_size -> targets, wówczas w inference bez interpolacji
-        x = self.interp(x, size=img_sizes, mode='nearest')
+
+        def including_rectangle(shapes):
+            w, h = 0, 0
+            for shape in shapes:
+                w = max(w, shape[-2])
+                h = max(h, shape[-1])
+            return [w, h]
+
+        x = x[0] # output z FPNa największej rozdzielczości
+
+        new_shape = [x[0], x[1]] + including_rectangle(img_sizes) # batch size, num_features, w, h
+
+        res = torch.zeros(new_shape)
+        for i, single_feature_map in enumerate(x):
+            img_size = (img_sizes[-2], img_sizes[-1])
+            res[i, :, :img_sizes[i][-2], :img_sizes[i][-1]] = self.interp(single_feature_map,
+                                                                          size=img_size,
+                                                                          mode='nearest')
+
+        # x = self.interp(x, size=img_sizes, mode='nearest')
         print("---------------------------------------------------------------------------")
-        print(x.size())
+        print(res.size())
         print("---------------------------------------------------------------------------")
-        x = self.conv1(x)
-        print(x.size())
+        res = self.conv1(res)
+        print(res.size())
         print("---------------------------------------------------------------------------")
         # assert list(x.size()) == [1, self.num_cls, img_sizes[0], img_sizes[1]]
-        return x
+        return res
 
 
 def make_roi_imagemask_predictor(cfg):

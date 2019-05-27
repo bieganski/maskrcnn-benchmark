@@ -197,6 +197,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         # semantic_proposals = proposals
 
         imagemasks = [getCWHMulticlassMask(x) for x in targets]
+        shapes = [x.shape for x in imagemasks]
 
         def including_rectangle(c, shapes):
             w, h = 0, 0
@@ -206,7 +207,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
             return (c, w, h)
 
         num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
-        new_shape = including_rectangle(num_cls, [x.shape for x in imagemasks])
+        new_shape = including_rectangle(num_cls, shapes)
 
         def _pad(shape, array, padval = -1):
             padded = np.full(tuple(shape), padval)
@@ -219,7 +220,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         semantic_targets = [torch.FloatTensor(x).unsqueeze(0).cuda() for x in resized_imagemasks]
         semantic_targets = torch.cat(tuple(semantic_targets))
         # torch.set_printoptions(profile="full")
-        assert False, semantic_targets.shape
+        # assert False, semantic_targets.shape
         # exit(1)
         # semantic segmentation does not need boxes
         if self.cfg.MODEL.IMAGEMASK_ON:
@@ -227,7 +228,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
                    + "due to resizing FPN output").format(features[0].size()[0])
             assert features[0].size()[0] == 1, err
             y, proposals_imagemask, loss_imagemask \
-                = self.imagemask(features, [tuple(x.shape[-2:]) for x in semantic_targets], semantic_targets)
+                = self.imagemask(features, shapes, semantic_targets)
             if self.training:
                 losses.update(loss_imagemask)
             print(losses)
