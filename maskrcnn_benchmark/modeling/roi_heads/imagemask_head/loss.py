@@ -10,26 +10,7 @@ class SegmentationMaskLoss(object):
         self.loss = F.binary_cross_entropy
 
     def __call__(self, x, gt):
-        # gt - lista targetów
-        # assert False, (x.size(), gt[0].size())
-        # AssertionError: (torch.Size([1, 60, 426, 500]), torch.Size([426, 500]))
-        # assert x.size()[0] == 1
-        # x = x.squeeze(0)
-        # assert x.size()[0] == self.num_cls
-        # # print(gt)
-        # gt = gt[0] # TODO wieksze batche
-        # assert False, gt.size
-        assert gt.size() == x.size()
-        # dim_ok_gt = torch.zeros_like(x, requires_grad=True)
-        # dim_ok_gt = torch.zeros_like(x, requires_grad=False, device='cuda')
-        # print(type(gt))
-        # thats lame, but should works
-        # for i in range(gt.size(0)):
-        #     for j in range(gt.size(1)):
-        #         cls = gt[i, j].item()
-        #         dim_ok_gt[cls, i, j] = 1
-
-        # assert dim_ok_gt.sum() == torch.nonzero(gt).sum()
+        assert gt.shape == x.shape
 
         # TODO tu moze zle dzialac przez mismatche obrazkow, zrobic wtedy dla kazdej warstwy pojedynczo
         x = self.soft(x, dim=1)
