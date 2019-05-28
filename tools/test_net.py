@@ -75,7 +75,6 @@ def main():
         iou_types = iou_types + ("keypoints",)
     if cfg.MODEL.IMAGEMASK_ON:
         iou_types = iou_types + ("semantic",)
-    assert False, iou_types
     output_folders = [None] * len(cfg.DATASETS.TEST)
     dataset_names = cfg.DATASETS.TEST
     if cfg.OUTPUT_DIR:

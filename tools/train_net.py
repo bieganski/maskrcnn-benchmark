@@ -80,11 +80,17 @@ def run_test(cfg, model, distributed):
     if distributed:
         model = model.module
     torch.cuda.empty_cache()  # TODO check if it helps
-    iou_types = ("bbox",)
+
+    if cfg.MODEL.MASK_ON or cfg.MODEL.KEYPOINT_ON:
+        iou_types = ("bbox",)
+    else:
+        iou_types = ()
     if cfg.MODEL.MASK_ON:
         iou_types = iou_types + ("segm",)
     if cfg.MODEL.KEYPOINT_ON:
         iou_types = iou_types + ("keypoints",)
+    if cfg.MODEL.IMAGEMASK_ON:
+        iou_types = iou_types + ("semantic",)
     output_folders = [None] * len(cfg.DATASETS.TEST)
     dataset_names = cfg.DATASETS.TEST
     if cfg.OUTPUT_DIR:
