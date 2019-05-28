@@ -49,9 +49,7 @@ def do_coco_evaluation(
         logger.info('Preparing keypoints results')
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
     if 'semantic' in iou_types:
-        logger.info('AUUUUUUUUUUUUUUUUU')
-        assert False, (len(predictions), [x.shape for x in predictions])
-        # coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
+        coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
 
 
     results = COCOResults(*iou_types)
@@ -71,6 +69,18 @@ def do_coco_evaluation(
         torch.save(results, os.path.join(output_folder, "coco_results.pth"))
     return results, coco_results
 
+
+def prepare_for_semantic(predictions, dataset):
+    import torch.nn.functional as F
+    interp = F.interpolate
+    for image_id, prediction in enumerate(predictions):
+        original_id = dataset.id_to_img_map[image_id]
+        img_info = dataset.get_img_info(image_id)
+        w = img_info["width"]
+        h = img_info["height"]
+
+        # dont look at it
+        resized = interp(prediction.unsqueeze(0).unsqueeze(0), (w, h)).squeeze(0).squeeze(0)
 
 def prepare_for_coco_detection(predictions, dataset):
     # assert isinstance(dataset, COCODataset)

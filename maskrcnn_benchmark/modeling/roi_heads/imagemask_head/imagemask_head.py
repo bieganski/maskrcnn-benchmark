@@ -21,7 +21,7 @@ class ImageMaskHead(torch.nn.Module):
 
         x = self.predictor(features)
 
-        proposals = torch.randn(2, 3) # self._to_proposals(x)
+        proposals = self._to_proposals(x)
 
         if self.training:
             assert targets is not None
