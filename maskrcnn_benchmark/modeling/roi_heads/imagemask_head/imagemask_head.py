@@ -17,15 +17,16 @@ class ImageMaskHead(torch.nn.Module):
         proposal = torch.max(x, dim=1)[1] # torch max returns (value, indices)
         return proposal
 
-    def forward(self, features, img_sizes, targets=None):
+    def forward(self, features, img_sizes=None, targets=None):
 
-        x = self.predictor(features, img_sizes)
+        x = self.predictor(features)
 
         proposals = self._to_proposals(x)
 
         if self.training:
             assert targets is not None
-            loss_imagemask = self.loss_evaluator(x, targets)
+            assert img_sizes is not None
+            loss_imagemask = self.loss_evaluator(x, img_sizes, targets)
             return x, proposals, dict(loss_imagemask=loss_imagemask)
 
         return x, proposals, {}

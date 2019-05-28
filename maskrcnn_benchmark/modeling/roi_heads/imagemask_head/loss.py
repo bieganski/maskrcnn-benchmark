@@ -1,5 +1,6 @@
 from torch.nn import functional as F
 
+import torch
 
 class SegmentationMaskLoss(object):
     def __init__(self, num_cls):
@@ -7,9 +8,28 @@ class SegmentationMaskLoss(object):
         self.num_cls = num_cls
         self.soft = F.softmax
         self.loss = F.binary_cross_entropy
+        self.interp = F.interpolate
         # self.loss2 = F.binary_cross_entropy_with_logits
 
-    def __call__(self, x, gt):
+    def __call__(self, x, gt, img_sizes):
+        def including_rectangle(shapes):
+            w, h = 0, 0
+            for shape in shapes:
+                w = max(w, shape[-2])
+                h = max(h, shape[-1])
+            return w, h
+
+        w, h = gt.shape[-2], gt.shape[-1] # including_rectangle(img_sizes)
+        new_shape = tuple([x.shape[0], x.shape[1], w, h]) # batch size, 60, w, h
+
+        res = torch.zeros(new_shape, device='cuda')
+        for i, single_feature_map in enumerate(x):
+            w, h = (img_sizes[i][-2], img_sizes[i][-1])
+            res[i, :, :w, :h] = self.interp(single_feature_map.unsqueeze(0),
+                                            size=(w, h),
+                                            mode='nearest')
+
+
         assert gt.shape == x.shape
 
         # TODO tu moze zle dzialac przez mismatche obrazkow, zrobic wtedy dla kazdej warstwy pojedynczo

@@ -134,7 +134,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
         assert len(boxes) == len(filtered_category_ids) == len(filtered_sgms.polygons) == len(filtered_kpts.keypoints)
         return boxlist
 
-    def forward(self, features, proposals, images, targets=None):
+    def forward(self, features, proposals, targets=None):
         losses = {}
         test = not bool(targets)
         # box_targets = targets
@@ -194,17 +194,12 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
 
         if self.cfg.MODEL.IMAGEMASK_ON:
-            shapes = images.image_sizes
-
             def including_rectangle(c, shapes):
                 w, h = 0, 0
                 for shape in shapes:
                     w = max(w, shape[-2])
                     h = max(h, shape[-1])
                 return (c, w, h)
-
-            num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
-            new_shape = including_rectangle(num_cls, shapes)
 
             def _pad(shape, array, padval=-1):
                 padded = np.full(tuple(shape), padval)
@@ -214,6 +209,9 @@ class CombinedROIHeads(torch.nn.ModuleDict):
 
             if self.training:
                 imagemasks = [getCWHMulticlassMask(x) for x in targets]
+                shapes = [x.shape for x in imagemasks]
+                num_cls = self.cfg.MODEL.ROI_IMAGEMASK_HEAD.NUM_CLASSES
+                new_shape = including_rectangle(num_cls, shapes)
                 resized_imagemasks = [_pad(new_shape, x, 0) for x in imagemasks]
                 semantic_targets = [torch.FloatTensor(x).unsqueeze(0).cuda() for x in resized_imagemasks]
                 semantic_targets = torch.cat(tuple(semantic_targets))

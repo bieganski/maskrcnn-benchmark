@@ -22,24 +22,8 @@ class MaskRCNNImageMakPredictor(nn.Module):
     # i liczy loss.
     def forward(self, x, img_sizes):
 
-        def including_rectangle(shapes):
-            w, h = 0, 0
-            for shape in shapes:
-                w = max(w, shape[-2])
-                h = max(h, shape[-1])
-            return w, h
+        x = x[0]  # output z FPNa największej rozdzielczości
 
-        x = x[0] # output z FPNa największej rozdzielczości
-
-        # w, h = including_rectangle(img_sizes)
-        # new_shape = tuple([x.shape[0], x.shape[1], w, h]) # batch size, 256, w, h
-        #
-        # res = torch.zeros(new_shape, device='cuda')
-        # for i, single_feature_map in enumerate(x):
-        #     w, h = (img_sizes[i][-2], img_sizes[i][-1])
-        #     res[i, :, :w, :h] = self.interp(single_feature_map.unsqueeze(0),
-        #                                     size=(w, h),
-        #                                     mode='nearest')
 
         # print(res.size())
         # print("---------------------------------------------------------------------------")
