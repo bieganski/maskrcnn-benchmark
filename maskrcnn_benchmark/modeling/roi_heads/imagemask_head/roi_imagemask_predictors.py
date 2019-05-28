@@ -20,7 +20,7 @@ class MaskRCNNImageMakPredictor(nn.Module):
     # Semantyczna segmentacja nie używa proposali z sieci RPN -
     # bierze bezpośrednio output z FPN, upsampluje do rozmiaru obrazka
     # i liczy loss.
-    def forward(self, x, img_sizes):
+    def forward(self, x):
 
         x = x[0]  # output z FPNa największej rozdzielczości
 

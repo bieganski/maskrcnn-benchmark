@@ -8,7 +8,7 @@ class ImageMaskHead(torch.nn.Module):
     def __init__(self, cfg):
         super(ImageMaskHead, self).__init__()
         self.cfg = cfg.clone()
-        self.predictor = make_roi_imagemask_predictor(cfg) # (1 x K x 128 x 128)
+        self.predictor = make_roi_imagemask_predictor(cfg) # (1 x K x 32, 40)
         self.loss_evaluator = make_roi_imagemask_loss_evaluator(cfg)
 
     def _to_proposals(self, x):
