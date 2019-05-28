@@ -216,7 +216,7 @@ class CombinedROIHeads(torch.nn.ModuleDict):
                 semantic_targets = [torch.FloatTensor(x).unsqueeze(0).cuda() for x in resized_imagemasks]
                 semantic_targets = torch.cat(tuple(semantic_targets))
             else:
-                semantic_targets = None
+                shapes, semantic_targets = None, None
 
             y, proposals_imagemask, loss_imagemask \
                 = self.imagemask(features, shapes, semantic_targets)
