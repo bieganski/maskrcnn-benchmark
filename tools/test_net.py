@@ -67,7 +67,6 @@ def main():
 
     if cfg.MODEL.MASK_ON or cfg.MODEL.KEYPOINT_ON:
         iou_types = ("bbox",)
-        assert False, (cfg.MODEL.MASK_ON, cfg.MODEL.KEYPOINT_ON)
     else:
         iou_types = ()
     if cfg.MODEL.MASK_ON:
@@ -76,6 +75,7 @@ def main():
         iou_types = iou_types + ("keypoints",)
     if cfg.MODEL.IMAGEMASK_ON:
         iou_types = iou_types + ("semantic",)
+    assert False, iou_types
     output_folders = [None] * len(cfg.DATASETS.TEST)
     dataset_names = cfg.DATASETS.TEST
     if cfg.OUTPUT_DIR:
