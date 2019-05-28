@@ -39,7 +39,6 @@ def do_coco_evaluation(
         return
     logger.info("Preparing results for COCO format")
     coco_results = {}
-    assert False, iou_types
     if "bbox" in iou_types:
         logger.info("Preparing bbox results")
         coco_results["bbox"] = prepare_for_coco_detection(predictions, dataset)
@@ -84,7 +83,6 @@ def prepare_for_coco_detection(predictions, dataset):
         img_info = dataset.get_img_info(image_id)
         image_width = img_info["width"]
         image_height = img_info["height"]
-        print(prediction.shape)
         prediction = prediction.resize((image_width, image_height))
         prediction = prediction.convert("xywh")
 

@@ -67,6 +67,7 @@ def main():
 
     if cfg.MODEL.MASK_ON or cfg.MODEL.KEYPOINT_ON:
         iou_types = ("bbox",)
+        assert False, (cfg.MODEL.MASK_ON, cfg.MODEL.KEYPOINT_ON)
     else:
         iou_types = ()
     if cfg.MODEL.MASK_ON:
