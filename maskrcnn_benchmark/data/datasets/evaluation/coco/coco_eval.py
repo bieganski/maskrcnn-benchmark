@@ -68,6 +68,7 @@ def do_coco_evaluation(
             mask = getMulticlassMask(blist)
             # print(type(mask))
             # print(mask.shape)
+            print(pred, data)
             assert mask.shape == pred.shape, (mask.shape , pred.shape)
 
 
