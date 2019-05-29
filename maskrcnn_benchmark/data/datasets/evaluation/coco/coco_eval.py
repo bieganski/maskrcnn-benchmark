@@ -50,11 +50,12 @@ def do_coco_evaluation(
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
+        resy = []
         for pred, data in zip(coco_results['semantic'], dataset):
             from maskrcnn_benchmark.structures.bounding_box import BoxList
-            torch.Tensor.__repr__= lambda self: str(self.shape)
 
-            # assert False, el
+            torch.Tensor.__repr__= lambda self: str(self.shape) # debug purpose
+
             # AssertionError: (torch.Size([500, 375]), # resized prediciton
             #                 (torch.Size([3, 800, 1066]),
             #                       BoxList(num_boxes=2,
@@ -62,15 +63,17 @@ def do_coco_evaluation(
             #                               image_height=800,
             #                               mode=xyxy),
             #                       0))
+
             blist = data[1]
             from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getMulticlassMask
-            print(blist)
+            # print(blist)
             mask = getMulticlassMask(blist)
-            # print(type(mask))
-            # print(mask.shape)
-            print(pred, data)
+            mask.transpose_(0, 1)
             assert mask.shape == pred.shape, (mask.shape , pred.shape)
-
+            mask = mask.type(torch.IntTensor)
+            pred = mask.type(torch.IntTensor)
+            resy.append(torch.sum(mask == pred).item())
+        assert False, resy
 
     results = COCOResults(*iou_types)
     logger.info("Evaluating predictions")
