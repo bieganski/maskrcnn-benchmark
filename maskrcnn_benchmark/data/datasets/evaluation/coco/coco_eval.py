@@ -55,7 +55,7 @@ def do_coco_evaluation(
             print(el[0].shape)
             bl = el[1]
             print(bl)
-            print(bl.fields)
+            print(bl.fields())
             exit(1)
 
     results = COCOResults(*iou_types)
