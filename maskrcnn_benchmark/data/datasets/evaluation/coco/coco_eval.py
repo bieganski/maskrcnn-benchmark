@@ -50,27 +50,26 @@ def do_coco_evaluation(
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
-        for el in zip(coco_results['semantic'], dataset):
+        for pred, data in zip(coco_results['semantic'], dataset):
             from maskrcnn_benchmark.structures.bounding_box import BoxList
             torch.Tensor.__repr__= lambda self: str(self.shape)
 
-            assert False, el
-            # AssertionError: (torch.Size([200, 272]),
+            # assert False, el
+            # AssertionError: (torch.Size([500, 375]), # resized prediciton
             #                 (torch.Size([3, 800, 1066]),
             #                       BoxList(num_boxes=2,
             #                               image_width=1066,
             #                               image_height=800,
             #                               mode=xyxy),
             #                       0))
-            bl = el[1][1]
+            blist = data[1]
+            from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getMulticlassMask
+            print(blist)
+            mask = getMulticlassMask(blist)
+            # print(type(mask))
+            # print(mask.shape)
+            assert mask.shape == pred.shape
 
-            from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getCWHMulticlassMask
-            print(bl)
-            mask = getCWHMulticlassMask(bl)
-            print(type(mask))
-            print(mask.shape)
-            # img =
-            exit(1)
 
     results = COCOResults(*iou_types)
     logger.info("Evaluating predictions")
