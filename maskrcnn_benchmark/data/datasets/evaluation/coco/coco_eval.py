@@ -52,7 +52,7 @@ def do_coco_evaluation(
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
         for el in zip(predictions, dataset):
             from maskrcnn_benchmark.structures.bounding_box import BoxList
-            torch.Tensor.__str__ = lambda self: print(self.shape)
+            torch.Tensor.__str__ = lambda self: str(self.shape)
             assert False, el
             print(el[0].shape)
             bl = el[1][1]
