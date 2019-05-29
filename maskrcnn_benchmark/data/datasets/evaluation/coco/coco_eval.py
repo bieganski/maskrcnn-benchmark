@@ -50,8 +50,11 @@ def do_coco_evaluation(
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
+        for el in dataset:
+            print(el)
+            print(dir(el))
+            exit(1)
 
-    assert False, (type(dataset), type(dataset.coco))
     results = COCOResults(*iou_types)
     logger.info("Evaluating predictions")
     for iou_type in iou_types:
