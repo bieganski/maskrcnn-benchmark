@@ -69,7 +69,7 @@ def do_coco_evaluation(
             mask = getCWHMulticlassMask(bl)
             print(type(mask))
             print(mask.shape)
-            img =
+            # img =
             exit(1)
 
     results = COCOResults(*iou_types)
