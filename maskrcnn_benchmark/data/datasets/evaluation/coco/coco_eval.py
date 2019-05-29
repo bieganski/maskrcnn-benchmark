@@ -51,10 +51,12 @@ def do_coco_evaluation(
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
         resy = []
+        torch.set_printoptions(profile="full")
+        # torch.Tensor.__repr__ = lambda self: str(self.shape)  # debug purpose
         for pred, data in zip(coco_results['semantic'], dataset):
             from maskrcnn_benchmark.structures.bounding_box import BoxList
 
-            torch.Tensor.__repr__= lambda self: str(self.shape) # debug purpose
+
 
             # AssertionError: (torch.Size([500, 375]), # resized prediciton
             #                 (torch.Size([3, 800, 1066]),
@@ -73,7 +75,8 @@ def do_coco_evaluation(
             mask = mask.type(torch.IntTensor)
             pred = mask.type(torch.IntTensor)
             # resy.append(torch.sum(mask == pred).item())
-            resy.append(torch.sum(mask).item())
+            # resy.append(torch.sum(mask).item())
+            print(mask)
         assert False, resy
 
     results = COCOResults(*iou_types)
