@@ -56,6 +56,7 @@ def do_coco_evaluation(
             bl = el[1]
             # mask = bl.get_field('semantic_masks')
             from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getCWHMulticlassMask
+            print(bl)
             mask = getCWHMulticlassMask(bl)
             print(type(mask))
             print(mask.shape)
