@@ -51,7 +51,7 @@ def do_coco_evaluation(
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
 
-
+    assert False, (type(dataset), type(dataset.coco))
     results = COCOResults(*iou_types)
     logger.info("Evaluating predictions")
     for iou_type in iou_types:
@@ -73,9 +73,10 @@ def do_coco_evaluation(
 def prepare_for_semantic(predictions, dataset):
     import torch.nn.functional as F
     interp = F.interpolate
+    coco_results = []
     for image_id, prediction in enumerate(predictions):
         original_id = dataset.id_to_img_map[image_id]
-        img_info = dataset.get_img_info(image_id)
+        img_info = dataset.get_img_info(image_id) # TODO czemu nie original_id?
         w = img_info["width"]
         h = img_info["height"]
 
@@ -83,7 +84,10 @@ def prepare_for_semantic(predictions, dataset):
         prediction = prediction.type('torch.DoubleTensor')
         resized = interp(prediction.unsqueeze(0).unsqueeze(0), (w, h)).squeeze(0).squeeze(0)
         resized = resized.type('torch.IntTensor')
-        assert False, resized.shape
+        coco_results.append(resized)
+    # TODO "image_id": original_id,
+    return coco_results
+
 
 def prepare_for_coco_detection(predictions, dataset):
     # assert isinstance(dataset, COCODataset)
