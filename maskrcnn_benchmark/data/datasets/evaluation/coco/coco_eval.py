@@ -51,11 +51,13 @@ def do_coco_evaluation(
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
         for el in dataset:
-            # from maskrcnn_benchmark.structures.bounding_box import BoxList
+            from maskrcnn_benchmark.structures.bounding_box import BoxList
             print(el[0].shape)
             bl = el[1]
-            print(bl)
-            print(bl.fields())
+            mask = bl.get_field('semantic_masks')
+            print(type(mask))
+            print(mask.shape)
+            # print(bl.fields())
             exit(1)
 
     results = COCOResults(*iou_types)
