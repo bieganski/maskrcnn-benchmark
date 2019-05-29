@@ -70,13 +70,14 @@ def do_coco_evaluation(
             from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getMulticlassMask
             # print(blist)
             mask = getMulticlassMask(blist)
-            mask.transpose_(0, 1)
+            pred.transpose_(0, 1) # TODO
             assert mask.shape == pred.shape, (mask.shape , pred.shape)
             mask = mask.type(torch.IntTensor)
             pred = mask.type(torch.IntTensor)
             # resy.append(torch.sum(mask == pred).item())
             # resy.append(torch.sum(mask).item())
             print(mask)
+            from detail import Detail
         assert False, resy
 
     results = COCOResults(*iou_types)
