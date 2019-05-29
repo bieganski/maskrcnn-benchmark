@@ -80,7 +80,9 @@ def prepare_for_semantic(predictions, dataset):
         h = img_info["height"]
 
         # dont look at it
+        prediction = prediction.type('torch.DoubleTensor')
         resized = interp(prediction.unsqueeze(0).unsqueeze(0), (w, h)).squeeze(0).squeeze(0)
+        resized = resized.type('torch.IntTensor')
         assert False, resized.shape
 
 def prepare_for_coco_detection(predictions, dataset):
