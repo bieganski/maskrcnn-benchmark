@@ -53,17 +53,22 @@ def do_coco_evaluation(
         for el in zip(predictions, dataset):
             from maskrcnn_benchmark.structures.bounding_box import BoxList
             torch.Tensor.__repr__= lambda self: str(self.shape)
-            bl = el[2]
-            # def pp(obj):
-            #     if isinstance(obj, list) or isinstance(obj, tuple):
 
-            # mask = bl.get_field('semantic_masks')
+            # assert False, el
+            # AssertionError: (torch.Size([200, 272]),
+            #                 (torch.Size([3, 800, 1066]),
+            #                       BoxList(num_boxes=2,
+            #                               image_width=1066,
+            #                               image_height=800,
+            #                               mode=xyxy),
+            #                       0))
+            bl = el[1][1]
+
             from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getCWHMulticlassMask
             print(bl)
             mask = getCWHMulticlassMask(bl)
             print(type(mask))
             print(mask.shape)
-            # print(bl.fields())
             exit(1)
 
     results = COCOResults(*iou_types)
