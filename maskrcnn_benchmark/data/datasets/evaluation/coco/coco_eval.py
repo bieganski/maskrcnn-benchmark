@@ -50,11 +50,13 @@ def do_coco_evaluation(
         coco_results['keypoints'] = prepare_for_coco_keypoint(predictions, dataset)
     if 'semantic' in iou_types:
         coco_results['semantic'] = prepare_for_semantic(predictions, dataset)
-        for el in dataset:
+        for el in zip(predictions, dataset):
             from maskrcnn_benchmark.structures.bounding_box import BoxList
             print(el[0].shape)
             bl = el[1]
-            mask = bl.get_field('semantic_masks')
+            # mask = bl.get_field('semantic_masks')
+            from maskrcnn_benchmark.modeling.roi_heads.roi_heads import getCWHMulticlassMask
+            mask = getCWHMulticlassMask(bl)
             print(type(mask))
             print(mask.shape)
             # print(bl.fields())
