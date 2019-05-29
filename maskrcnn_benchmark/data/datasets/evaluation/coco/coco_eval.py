@@ -54,6 +54,7 @@ def do_coco_evaluation(
             # from maskrcnn_benchmark.structures.bounding_box import BoxList
             print(el[0].shape)
             bl = el[1]
+            print(bl)
             print(bl.fields)
             exit(1)
 
