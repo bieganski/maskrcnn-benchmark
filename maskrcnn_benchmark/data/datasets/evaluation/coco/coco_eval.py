@@ -72,7 +72,8 @@ def do_coco_evaluation(
             assert mask.shape == pred.shape, (mask.shape , pred.shape)
             mask = mask.type(torch.IntTensor)
             pred = mask.type(torch.IntTensor)
-            resy.append(torch.sum(mask == pred).item())
+            # resy.append(torch.sum(mask == pred).item())
+            resy.append(torch.sum(mask).item())
         assert False, resy
 
     results = COCOResults(*iou_types)
