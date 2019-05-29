@@ -81,6 +81,7 @@ def prepare_for_semantic(predictions, dataset):
 
         # dont look at it
         resized = interp(prediction.unsqueeze(0).unsqueeze(0), (w, h)).squeeze(0).squeeze(0)
+        assert False, resized.shape
 
 def prepare_for_coco_detection(predictions, dataset):
     # assert isinstance(dataset, COCODataset)
