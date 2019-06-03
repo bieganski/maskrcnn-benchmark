@@ -312,7 +312,90 @@ def evaluate_predictions_on_coco(
 
     from pycocotools.coco import COCO
     from pycocotools.cocoeval import COCOeval
+import copy
 
+#     # filter gt dataset and create object COCO using it as an arg
+#     # create dt COCO object using filtered json_result_file based on filtered gt dataset
+    filtered_ground_dataset = copy.deepcopy(coco_gt.dataset)
+
+#     #'annotations', 'categories', 'images', 'info'
+    
+#     # categories with onlysemantic = 0
+    non_semantic_only_cats = {2, 23, 25, 31, 34, 45, 59, 65, 72, 98, 397, 113, 207, 258, 284, 308, 347, 368, 416, 427}
+    
+#     # delete all annotations with onlysemantic class using dict with original class numbers
+    
+    
+    
+    # z = [print('!') for ann in coco_gt.dataset['annotations'] if ann['category_id'] in non_semantic_only_cats]
+    # z = [print('?') for ann in coco_gt.dataset['annotations'] if ann['category_id'] not in non_semantic_only_cats]
+    # z = [print(ann) for ann in coco_gt.dataset['annotations'] if ann['category_id'] not in non_semantic_only_cats]
+    filtered_ground_dataset['annotations'] = [ann for ann in coco_gt.dataset['annotations'] if ann['category_id'] in non_semantic_only_cats]
+    anns_ids_to_delete = []
+    imgs_ids_to_delete = []
+    # print(len(coco_gt.dataset['annotations']))
+    # print(len(filtered_ground_dataset['annotations']))
+    # print(len(coco_gt.dataset['annotations']) - len(filtered_ground_dataset['annotations']))
+    counterek = 0
+    if iou_type == 'segm':
+      for img in filtered_ground_dataset['images']:
+        anns_ids_to_delete_temp = []
+        anns = coco_gt.imgToAnns[img['id']]
+        valid_one = False
+        for ann in anns:
+          valid = True
+          for inner_poly in ann['segmentation']:
+            if len(inner_poly) <= 4:
+              # print(ann)
+              counterek = counterek + 1
+              valid = False
+          if valid and len(ann['segmentation']) > 0:
+            valid_one = True
+          else:
+            anns_ids_to_delete_temp.append(ann['id'])
+        if not valid_one:
+          imgs_ids_to_delete.append(img['id'])
+          anns_ids_to_delete_temp = [ann['id'] for ann in coco_gt.imgToAnns[img['id']]]
+        anns_ids_to_delete.extend(anns_ids_to_delete_temp)      
+      
+    elif iou_type == 'keypoints':
+      for img in filtered_ground_dataset['images']:
+        anns_ids_to_delete_temp = []
+        anns = coco_gt.imgToAnns[img['id']]
+        counter = 0
+        for ann in anns:
+          if ann['num_keypoints'] == 0:
+            anns_ids_to_delete_temp.append(ann['id'])
+          else:
+            counter += ann['num_keypoints']
+            # print(counter)
+        if counter < 5:
+          imgs_ids_to_delete.append(img['id'])
+          anns_ids_to_delete_temp = [ann['id'] for ann in coco_gt.imgToAnns[img['id']]]
+        anns_ids_to_delete.extend(anns_ids_to_delete_temp)
+      
+    filtered_ground_dataset['images'] = [img for img in filtered_ground_dataset['images'] if img['id'] not in imgs_ids_to_delete]
+    filtered_ground_dataset['annotations'] = [ann for ann in filtered_ground_dataset['annotations'] if ann['id'] not in anns_ids_to_delete]
+    
+#     print(counterek)
+    img_ids = set()
+    for x in filtered_ground_dataset['annotations']:
+      img_ids.add(x['image_id'])
+    
+    filtered_ground_dataset['images'] = [img for img in filtered_ground_dataset['images'] if img['id'] in img_ids]
+    
+    
+    json_filtered_gt_file = "json_filtered_gt_file"
+    with open(json_filtered_gt_file, "w") as f:
+        json.dump(filtered_ground_dataset, f)
+    
+    coco_gt = COCO(json_filtered_gt_file)
+    
+    coco_results = [result for result in coco_results if result['image_id'] in img_ids]
+    
+    with open(json_result_file, "w") as f:
+        json.dump(coco_results, f)
+    
     coco_dt = coco_gt.loadRes(str(json_result_file)) if coco_results else COCO()
 
     if iou_type == 'keypoints':
@@ -325,7 +408,7 @@ def evaluate_predictions_on_coco(
     else:
         coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
     # coco_dt = coco_gt.loadRes(coco_results)
-    coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
+    # coco_eval = COCOeval(coco_gt, coco_dt, iou_type)
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
