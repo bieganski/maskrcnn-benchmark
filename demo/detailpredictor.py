@@ -185,8 +185,8 @@ class COCODemo(object):
         nonzero = np.unique(mask[np.nonzero(mask)])
         import cv2
         # dst = cv2.addWeighted(image,0.7,mask,0.3,0)
-        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-        
+        # plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+
         plt.imshow(mask, cmap=mycmap, vmin=np.min(nonzero), vmax=np.max(nonzero) + 1)
         plt.axis('off')
         plt.show()
