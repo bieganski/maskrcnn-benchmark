@@ -312,7 +312,7 @@ def evaluate_predictions_on_coco(
 
     from pycocotools.coco import COCO
     from pycocotools.cocoeval import COCOeval
-import copy
+    import copy
 
 #     # filter gt dataset and create object COCO using it as an arg
 #     # create dt COCO object using filtered json_result_file based on filtered gt dataset
