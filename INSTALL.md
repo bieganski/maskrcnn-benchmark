@@ -45,10 +45,13 @@ In order to run the training using our configuration you should first change the
 
 ```bash
 chmod +x toCoco.py
-./toCoco.py
+./toCoco.py 		# changes the Detail annotations
 
 chmod +x sort_images.sh
-./sort_images.sh
+./sort_images.sh 	# sorts the images into proper directories
+
+python ./tools/trim_detectron_model.py
+# trims the weights of the base model
 
 make train 			# uses 1 GPU
 make multitrain		# uses 4 GPUs
