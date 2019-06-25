@@ -69,9 +69,7 @@ mask_build:
 build_all: github_build pascal_build mask_build
 
 
-
 prepare_download: create_venv download pascal_dload
-
 
 
 # needs activation
@@ -121,17 +119,17 @@ show_dataset_split:
 	@jq '.images[].phase' ${DETAIL} | cut -d \" -f 2 | sort | uniq -c
 
 train:
-	if [ -d "./trash" ]; then \
-		cd ./trash && rm -rf *; \
-	else mkdir trash; \
+	if [ -d "./train_logs" ]; then \
+		cd ./train_logs && rm -rf *; \
+	else mkdir train_logs; \
 	fi
 	python3 ./tools/train_net.py --config-file "./configs/detail/zpp_config.yaml"
 
 NGPUS=4
 multitrain:
-	if [ -d "./trash3" ]; then \
-		cd ./trash3 && rm -rf *; \
-	else mkdir trash3; \
+	if [ -d "./multitrain_logs" ]; then \
+		cd ./multitrain_logs && rm -rf *; \
+	else mkdir multitrain_logs; \
 	fi
 	python -m torch.distributed.launch --nproc_per_node=${NGPUS} ./tools/train_net.py --config-file "./configs/detail/zpp_config_4GPU.yaml"
 
